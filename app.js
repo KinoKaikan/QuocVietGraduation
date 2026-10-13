@@ -8,7 +8,7 @@
 // ==========================================
 // CONFIGURATION & CONSTANTS
 // ==========================================
-const GOOGLE_CLIENT_ID = "1048866565155-k3o8r6j8f1m2e3n4o5p6q7r8s9t0u1v2.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "892188408749-31vqfrqmlk18u1at62evte7vj62udbq3.apps.googleusercontent.com";
 
 const CARD_CONFIG = {
   width: 1000,
