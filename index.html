@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thiệp Mời Lễ Tốt Nghiệp - Trần Quốc Việt | FPT University</title>
+  <meta name="description" content="Trang tạo thiệp mời dự lễ tốt nghiệp cá nhân hóa của Trần Quốc Việt với Google Sign-In và đồ họa HTML5 Canvas cao cấp.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+
+  <!-- Google Fonts với chuẩn Tiếng Việt 100% (Playfair Display, Lora, Dancing Script, Be Vietnam Pro, Montserrat) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Dancing+Script:wght@600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <!-- Google Identity Services (GSI) Client -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient background glow & sparkles -->
+  <div class="ambient-stars" id="ambientStars"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <main class="page-container">
+    <!-- Header / Welcome Section -->
+    <header class="hero-header">
+      <div class="badge-pill">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>FPT UNIVERSITY • GRADUATION CEREMONY 2026</span>
+      </div>
+      
+      <h1 class="main-title">
+        KÍNH MỜI BẠN ĐẾN DỰ LỄ TỐT NGHIỆP CỦA <span class="gold-text">TRẦN QUỐC VIỆT</span>
+      </h1>
+      
+      <p class="hero-subtitle">
+        Khép lại hành trình 4 năm đại học với biết bao kỷ niệm và nỗ lực. Trân trọng kính mời bạn cùng đến chung vui trong ngày lễ tốt nghiệp!
+      </p>
+    </header>
+
+    <!-- Main Card Generator Interface -->
+    <section class="generator-section">
+      <!-- State 1: Google Authentication Container (Before Login) -->
+      <div id="authSection" class="glass-card auth-card">
+        <div class="card-ornament top-ornament">
+          <i class="fa-solid fa-certificate"></i>
+        </div>
+        
+        <h2 class="auth-title">Đăng Nhập Để Nhận Thiệp Cá Nhân Hóa</h2>
+        <p class="auth-desc">
+          Vui lòng đăng nhập với tài khoản Google để hệ thống tự động trích xuất tên chính thức của bạn lên thiệp mời.
+        </p>
+
+        <!-- Official Google Sign-In Button Container -->
+        <div class="google-btn-wrapper">
+          <div id="googleSignInBtn" class="g-signin-placeholder">
+            <!-- Rendered dynamically by Google Identity Services -->
+          </div>
+          <p class="auth-hint">
+            <i class="fa-solid fa-shield-halved"></i> Đăng nhập an toàn qua Google Identity Services (Client-side JWT)
+          </p>
+        </div>
+
+        <!-- Divider with Gold Text -->
+        <div class="luxury-divider">
+          <span>HOẶC TRẢI NGHIỆM XEM TRƯỚC</span>
+        </div>
+
+        <!-- Quick Demo / Custom Name Form -->
+        <div class="quick-input-group">
+          <label for="customGuestInput" class="input-label">
+            <i class="fa-solid fa-user-pen"></i> Nhập trực tiếp tên khách mời:
+          </label>
+          <div class="input-actions-row">
+            <input 
+              type="text" 
+              id="customGuestInput" 
+              class="gold-input" 
+              placeholder="VD: Nguyễn Văn A, Thầy Cô, Bạn Thân..." 
+              value="Nguyễn Văn A"
+              maxlength="45"
+            >
+            <button id="applyCustomNameBtn" class="btn btn-gold">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Tạo Thiệp Ngay
+            </button>
+          </div>
+
+          <!-- Quick presets tags -->
+          <div class="preset-tags">
+            <span class="preset-label">Gợi ý nhanh:</span>
+            <button type="button" class="tag-btn" data-name="Bạn Của Việt Đẹp Trai">Bạn Của Việt</button>
+            <button type="button" class="tag-btn" data-name="Gia Đình Thân Yêu">Gia Đình Thân Yêu</button>
+            <button type="button" class="tag-btn" data-name="Thầy Cô Kính Mến">Thầy Cô Kính Mến</button>
+            <button type="button" class="tag-btn" data-name="Cốt Ai Nấy Hốt">Cốt</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- State 2: Logged-in Greeting Banner -->
+      <div id="userProfileBanner" class="glass-card user-profile-banner" style="display: none;">
+        <div class="user-info-cluster">
+          <div class="avatar-ring" id="userAvatarContainer">
+            <img id="userAvatarImg" src="assets/portrait.jpg" alt="Avatar" class="google-user-avatar">
+          </div>
+          <div class="user-text-meta">
+            <div class="welcome-badge">
+              <i class="fa-solid fa-circle-check"></i> Đã xác thực tài khoản Google
+            </div>
+            <h3 class="user-greeting-name">
+              Xin chào, <span id="displayNameText" class="gold-highlight">Nguyễn Văn A</span>! 🎉
+            </h3>
+            <p class="user-subtext" id="userEmailText">
+              Thiệp mời tốt nghiệp chính thức của bạn đã được tạo độc quyền bên dưới:
+            </p>
+          </div>
+        </div>
+        <button id="switchAccountBtnTop" class="btn btn-outline-gold" title="Đổi tài khoản khác">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Đổi tài khoản
+        </button>
+      </div>
+
+      <!-- Card Display & Canvas Stage -->
+      <div class="canvas-stage-wrapper">
+        <div class="stage-frame">
+          <!-- Canvas Loading Indicator -->
+          <div id="canvasLoader" class="canvas-loader">
+            <div class="spinner-gold"></div>
+            <p>Đang tải phông chữ và dựng thiệp mời...</p>
+          </div>
+
+          <!-- The HTML5 Canvas for High-Resolution Invitation Card -->
+          <canvas id="invitationCanvas" width="1000" height="1500"></canvas>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="action-controls-card glass-card">
+          <div class="controls-group primary-actions">
+            <!-- Button 1: Download Card (PNG) -->
+            <button id="downloadBtn" class="btn btn-gold btn-large">
+              <i class="fa-solid fa-download"></i> Tải Thiệp Về (PNG)
+            </button>
+
+            <!-- Copy to Clipboard -->
+            <button id="copyImageBtn" class="btn btn-secondary btn-large">
+              <i class="fa-solid fa-copy"></i> Sao Chép Ảnh
+            </button>
+          </div>
+
+          <div class="controls-group secondary-actions">
+            <!-- Add to Google Calendar -->
+            <a 
+              id="googleCalendarBtn" 
+              class="btn btn-outline-gold" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=L%E1%BB%85+T%E1%BB%91t+Nghi%E1%BB%87p+C%E1%BB%A7a+Tr%E1%BA%A7n+Qu%E1%BB%91c+Vi%E1%BB%87t&dates=20261025T030000Z/20261025T040000Z&details=K%C3%ADnh+m%E1%BB%9Di+b%E1%BA%A1n+%C4%91%E1%BA%BFn+d%E1%BB%B1+L%E1%BB%85+T%E1%BB%91t+Nghi%E1%BB%87p+c%E1%BB%A7a+Tr%E1%BA%A7n+Qu%E1%BB%91c+Vi%E1%BB%87t+t%E1%BA%A1i+%C4%90%E1%BA%A1i+H%E1%BB%8Dc+FPT+C%E1%BA%A7n+Th%C6%A1.&location=S%E1%BB%91+600%2C+%C4%91%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB+n%E1%BB%91i+d%C3%A0i%2C+ph%C6%B0%E1%BB%9Dng+An+B%C3%ACnh%2C+qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP+C%E1%BA%A7n+Th%C6%A1"
+            >
+              <i class="fa-regular fa-calendar-plus"></i> Thêm vào Google Calendar
+            </a>
+
+            <!-- Button 2: Reset Google Auth / Switch Account -->
+            <button id="switchAccountBtn" class="btn btn-outline-danger">
+              <i class="fa-solid fa-rotate-left"></i> Đổi tài khoản Google
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Info Cards (Venue & Date) - Removed "Liên Hệ Tân Kỹ Sư" -->
+      <div class="info-grid">
+        <div class="info-box glass-card">
+          <div class="info-icon">
+            <i class="fa-regular fa-calendar-check"></i>
+          </div>
+          <div class="info-content">
+            <h4>Thời Gian Buổi Lễ</h4>
+            <p class="highlight-date">10:00 - 11:00 | Chủ Nhật</p>
+            <p class="sub-date">Ngày 25 tháng 10 năm 2026</p>
+          </div>
+        </div>
+
+        <div class="info-box glass-card">
+          <div class="info-icon">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <div class="info-content">
+            <h4>Địa Điểm Tổ Chức</h4>
+            <p class="highlight-location">Đại Học FPT Cần Thơ</p>
+            <p class="sub-address">Số 600 Nguyễn Văn Cừ nối dài, P. An Bình, Q. Ninh Kiều, TP. Cần Thơ</p>
+            <a href="https://maps.google.com/?q=Đại+học+FPT+Cần+Thơ" target="_blank" class="map-link">
+              <i class="fa-solid fa-diamond-turn-right"></i> Xem chỉ đường trên Google Maps
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="page-footer">
+      <div class="footer-crest">
+        <span class="crest-line"></span>
+        <i class="fa-solid fa-graduation-cap gold-text"></i>
+        <span class="crest-line"></span>
+      </div>
+      <p class="footer-copy">
+        © 2026 Trần Quốc Việt • Đại học FPT Cần Thơ • Thiết kế thiệp số động chuẩn bị cho GitHub Pages
+      </p>
+    </footer>
+  </main>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="toast-notification"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# System & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Personal transcript file
+StudentTranscript_*.xls
+StudentTranscript_*.xlsx
+
+# Backups
+*backup*
