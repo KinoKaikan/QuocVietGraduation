@@ -14,6 +14,7 @@ const CARD_CONFIG = {
   width: 1000,
   height: 1500,
   avatarSrc: "assets/portrait.jpg",
+  specialAvatarSrc: "assets/bo_iu.jpg",
   hostName: "TRẦN QUỐC VIỆT",
   hostTitle: "Kỹ Thuật Phần Mềm • ĐH FPT Cần Thơ",
   dateHeader: "THÁNG 10",
@@ -33,6 +34,9 @@ const state = {
   googleUser: null, // { name, email, picture, sub }
   avatarImageLoaded: false,
   avatarImage: null,
+  specialAvatarImageLoaded: false,
+  specialAvatarImage: null,
+  isSpecialMode: false,
   isRendering: false,
   isCardUnlocked: false
 };
@@ -79,6 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function unlockAndShowCard(guestName, isSecret = false, shouldScroll = true) {
   state.isCardUnlocked = true;
+  state.isSpecialMode = !!isSecret;
+
   if (guestName) {
     state.currentGuestName = guestName;
   }
@@ -104,23 +110,40 @@ function unlockAndShowCard(guestName, isSecret = false, shouldScroll = true) {
 // ASSET PRELOADING
 // ==========================================
 function setupPreloadAvatar() {
-  const img = new Image();
-  img.crossOrigin = "anonymous";
-  img.onload = () => {
+  // Preload standard portrait
+  const imgDefault = new Image();
+  imgDefault.crossOrigin = "anonymous";
+  imgDefault.onload = () => {
     state.avatarImageLoaded = true;
-    state.avatarImage = img;
-    if (state.isCardUnlocked) {
+    state.avatarImage = imgDefault;
+    if (state.isCardUnlocked && !state.isSpecialMode) {
       renderInvitationCard();
     }
   };
-  img.onerror = () => {
+  imgDefault.onerror = () => {
     console.warn("Avatar image failed to load, fallback avatar circle will be used.");
     state.avatarImageLoaded = false;
-    if (state.isCardUnlocked) {
+    if (state.isCardUnlocked && !state.isSpecialMode) {
       renderInvitationCard();
     }
   };
-  img.src = CARD_CONFIG.avatarSrc;
+  imgDefault.src = CARD_CONFIG.avatarSrc;
+
+  // Preload special couple portrait for 120804 (Bồ iu)
+  const imgSpecial = new Image();
+  imgSpecial.crossOrigin = "anonymous";
+  imgSpecial.onload = () => {
+    state.specialAvatarImageLoaded = true;
+    state.specialAvatarImage = imgSpecial;
+    if (state.isCardUnlocked && state.isSpecialMode) {
+      renderInvitationCard();
+    }
+  };
+  imgSpecial.onerror = () => {
+    console.warn("Special avatar image failed to load.");
+    state.specialAvatarImageLoaded = false;
+  };
+  imgSpecial.src = CARD_CONFIG.specialAvatarSrc;
 }
 
 // ==========================================
@@ -370,7 +393,7 @@ function setupUIEventListeners() {
 
       // Secret Code 120804 -> Bồ iu
       let isSecret = false;
-      if (trimmed === "120804") {
+      if (trimmed === "120804" || trimmed.toLowerCase() === "bồ iu" || trimmed.toLowerCase() === "bo iu") {
         trimmed = "Bồ iu";
         customGuestInput.value = "Bồ iu";
         isSecret = true;
@@ -392,7 +415,8 @@ function setupUIEventListeners() {
     });
     // Auto-detect when 120804 is typed
     customGuestInput.addEventListener('input', () => {
-      if (customGuestInput.value.trim() === "120804") {
+      const val = customGuestInput.value.trim();
+      if (val === "120804" || val.toLowerCase() === "bồ iu" || val.toLowerCase() === "bo iu") {
         handleApplyName();
       }
     });
@@ -707,8 +731,14 @@ function drawCenterAvatarCircle(ctx, cx, cy, radius) {
 
   // Outer radiant aura
   const aura = ctx.createRadialGradient(cx, cy, radius - 10, cx, cy, radius + 25);
-  aura.addColorStop(0, "rgba(212, 175, 55, 0.45)");
-  aura.addColorStop(1, "rgba(212, 175, 55, 0)");
+  if (state.isSpecialMode) {
+    aura.addColorStop(0, "rgba(255, 120, 170, 0.45)");
+    aura.addColorStop(0.5, "rgba(212, 175, 55, 0.3)");
+    aura.addColorStop(1, "rgba(255, 105, 180, 0)");
+  } else {
+    aura.addColorStop(0, "rgba(212, 175, 55, 0.45)");
+    aura.addColorStop(1, "rgba(212, 175, 55, 0)");
+  }
   ctx.fillStyle = aura;
   ctx.beginPath();
   ctx.arc(cx, cy, radius + 25, 0, Math.PI * 2);
@@ -720,12 +750,23 @@ function drawCenterAvatarCircle(ctx, cx, cy, radius) {
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.clip();
 
-  if (state.avatarImageLoaded && state.avatarImage) {
-    const img = state.avatarImage;
+  const activeImg = (state.isSpecialMode && state.specialAvatarImageLoaded && state.specialAvatarImage)
+    ? state.specialAvatarImage
+    : ((state.avatarImageLoaded && state.avatarImage) ? state.avatarImage : null);
+
+  if (activeImg) {
+    const img = activeImg;
     const aspect = img.width / img.height;
     let drawW, drawH, drawX, drawY;
 
-    if (aspect > 1) {
+    if (state.isSpecialMode) {
+      // Photo is 2048x1364 (landscape couple photo)
+      // Radius = 150 (diameter 300px), perfectly frame both faces in circle
+      drawH = 380;
+      drawW = drawH * aspect;
+      drawX = cx - drawW / 2;
+      drawY = cy - 160;
+    } else if (aspect > 1) {
       drawH = radius * 2;
       drawW = drawH * aspect;
       drawX = cx - drawW / 2;
