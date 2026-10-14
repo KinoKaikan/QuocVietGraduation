@@ -21,7 +21,7 @@ const CARD_CONFIG = {
   dayOfMonth: "25",
   time: "11:30 - 12:00",
   year: "2026",
-  venueName: "Hội Trường Lớn - Trường Đại Học FPT Cần Thơ",
+  venueName: "Trường Đại Học FPT Cần Thơ",
   venueAddressLine1: "Số 600, đường Nguyễn Văn Cừ nối dài, phường An Bình,",
   venueAddressLine2: "quận Ninh Kiều, TP Cần Thơ",
   phone: "0949373770"
@@ -51,6 +51,7 @@ const canvasParticles = Array.from({ length: 45 }, () => ({
 document.addEventListener('DOMContentLoaded', () => {
   setupPreloadAvatar();
   setupUIEventListeners();
+  setupHolographicTilt();
   checkPersistedSession();
   checkUrlParameters();
   setupGoogleIdentityServices();
@@ -1017,4 +1018,115 @@ function showToast(message) {
   toastTimer = setTimeout(() => {
     toast.classList.remove('show');
   }, 4200);
+}
+
+// ==========================================
+// HOLOGRAPHIC 3D TILT & LIGHT SHEEN (HIỆU ỨNG CHIẾU SÁNG THẺ BÀI)
+// ==========================================
+function setupHolographicTilt() {
+  const card = document.getElementById('holoCard');
+  if (!card) return;
+
+  let currentTiltX = 0;
+  let currentTiltY = 0;
+  let targetTiltX = 0;
+  let targetTiltY = 0;
+  let isMobileOrientationActive = false;
+
+  // 1. Mobile Gyroscope (DeviceOrientation khi nghiêng điện thoại)
+  function handleDeviceOrientation(e) {
+    if (e.beta === null || e.gamma === null) return;
+    isMobileOrientationActive = true;
+
+    // Beta: nghiêng trước/sau (cầm điện thoại góc ~45 độ nhìn vào)
+    // Gamma: nghiêng trái/phải (-90 đến 90)
+    const normalizedBeta = Math.max(-25, Math.min(25, (e.beta - 45) * 0.75));
+    const normalizedGamma = Math.max(-25, Math.min(25, e.gamma * 0.9));
+
+    targetTiltX = -normalizedBeta;
+    targetTiltY = normalizedGamma;
+  }
+
+  // Request iOS permission if required
+  function initMobileOrientation() {
+    if (typeof DeviceOrientationEvent !== 'undefined') {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+            }
+          })
+          .catch(console.error);
+      } else {
+        window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+      }
+    }
+  }
+
+  initMobileOrientation();
+  window.addEventListener('touchstart', initMobileOrientation, { once: true });
+  window.addEventListener('click', initMobileOrientation, { once: true });
+
+  // 2. Desktop Mouse Move (Di chuột tạo hiệu ứng 3D nghiêng thẻ)
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+
+    targetTiltX = -y * 20;
+    targetTiltY = x * 20;
+  });
+
+  card.addEventListener('mouseleave', () => {
+    if (!isMobileOrientationActive) {
+      targetTiltX = 0;
+      targetTiltY = 0;
+    }
+  });
+
+  // Touch Move fallback on mobile touch
+  card.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches[0]) {
+      const touch = e.touches[0];
+      const rect = card.getBoundingClientRect();
+      const x = (touch.clientX - rect.left) / rect.width - 0.5;
+      const y = (touch.clientY - rect.top) / rect.height - 0.5;
+      targetTiltX = -y * 18;
+      targetTiltY = x * 18;
+    }
+  }, { passive: true });
+
+  // 3. Smooth Lerp Animation Loop (60-120 FPS)
+  function renderTilt() {
+    const ease = 0.12;
+    currentTiltX += (targetTiltX - currentTiltX) * ease;
+    currentTiltY += (targetTiltY - currentTiltY) * ease;
+
+    const rotX = currentTiltX;
+    const rotY = currentTiltY;
+
+    card.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg)`;
+
+    // Tính toán vị trí phản chiếu tia sáng (Specular Glare)
+    const glareX = 50 + currentTiltY * 2.2;
+    const glareY = 50 - currentTiltX * 2.2;
+    card.style.setProperty('--glare-x', `${glareX.toFixed(1)}%`);
+    card.style.setProperty('--glare-y', `${glareY.toFixed(1)}%`);
+
+    // Tính toán góc và vị trí dải quang phổ ngũ sắc (Rainbow Foil Sheen)
+    const sheenPos = `${(50 + currentTiltY * 2.5).toFixed(1)}% ${(50 - currentTiltX * 2.5).toFixed(1)}%`;
+    const sheenAngle = `${(125 + currentTiltY * 1.6).toFixed(1)}deg`;
+    card.style.setProperty('--sheen-pos', sheenPos);
+    card.style.setProperty('--sheen-angle', sheenAngle);
+
+    // Điều chỉnh độ sáng hào quang theo góc nghiêng
+    const intensity = Math.min(1, Math.max(0.35, (Math.abs(currentTiltX) + Math.abs(currentTiltY)) / 12));
+    card.style.setProperty('--glare-opacity', `${(0.35 + intensity * 0.45).toFixed(2)}`);
+    card.style.setProperty('--sheen-opacity', `${(0.45 + intensity * 0.35).toFixed(2)}`);
+
+    requestAnimationFrame(renderTilt);
+  }
+
+  requestAnimationFrame(renderTilt);
 }

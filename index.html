@@ -129,9 +129,13 @@
         </button>
       </div>
 
-      <!-- Card Display & Canvas Stage -->
-      <div class="canvas-stage-wrapper">
-        <div class="stage-frame">
+      <!-- Card Display & Canvas Stage with 3D Holographic Foil Tilt -->
+      <div class="canvas-stage-wrapper" id="canvasStageWrapper">
+        <div class="stage-frame" id="holoCard">
+          <!-- Holographic Foil Glare & Rainbow Sheen (Hiệu ứng chiếu sáng thẻ bài) -->
+          <div class="holo-glare" id="holoGlare"></div>
+          <div class="holo-sheen" id="holoSheen"></div>
+
           <!-- Canvas Loading Indicator -->
           <div id="canvasLoader" class="canvas-loader">
             <div class="spinner-gold"></div>
