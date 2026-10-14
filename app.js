@@ -14,7 +14,7 @@ const CARD_CONFIG = {
   width: 1000,
   height: 1500,
   avatarSrc: "assets/portrait.jpg",
-  specialAvatarSrc: "assets/bo_iu.jpg",
+  specialAvatarSrc: "Boiu.jpg",
   hostName: "TRẦN QUỐC VIỆT",
   hostTitle: "Kỹ Thuật Phần Mềm • ĐH FPT Cần Thơ",
   dateHeader: "THÁNG 10",
@@ -97,6 +97,12 @@ function unlockAndShowCard(guestName, isSecret = false, shouldScroll = true) {
     stage.classList.add('stage-visible');
   }
 
+  if (state.isSpecialMode && !state.specialAvatarImageLoaded) {
+    loadSpecialAvatar(() => {
+      renderInvitationCard();
+    });
+  }
+
   renderInvitationCard();
 
   if (shouldScroll && stage) {
@@ -109,10 +115,42 @@ function unlockAndShowCard(guestName, isSecret = false, shouldScroll = true) {
 // ==========================================
 // ASSET PRELOADING
 // ==========================================
+function loadSpecialAvatar(callback) {
+  if (state.specialAvatarImageLoaded && state.specialAvatarImage) {
+    if (callback) callback(state.specialAvatarImage);
+    return;
+  }
+
+  const candidates = ["Boiu.jpg", "assets/Boiu.jpg", "assets/bo_iu.jpg"];
+  let cIndex = 0;
+
+  function tryLoadNext() {
+    if (cIndex >= candidates.length) {
+      console.warn("All special avatar candidate paths failed.");
+      return;
+    }
+    const path = candidates[cIndex++];
+    const img = new Image();
+    img.onload = () => {
+      state.specialAvatarImageLoaded = true;
+      state.specialAvatarImage = img;
+      if (callback) callback(img);
+      if (state.isCardUnlocked && state.isSpecialMode) {
+        renderInvitationCard();
+      }
+    };
+    img.onerror = () => {
+      tryLoadNext();
+    };
+    img.src = path;
+  }
+
+  tryLoadNext();
+}
+
 function setupPreloadAvatar() {
   // Preload standard portrait
   const imgDefault = new Image();
-  imgDefault.crossOrigin = "anonymous";
   imgDefault.onload = () => {
     state.avatarImageLoaded = true;
     state.avatarImage = imgDefault;
@@ -130,20 +168,7 @@ function setupPreloadAvatar() {
   imgDefault.src = CARD_CONFIG.avatarSrc;
 
   // Preload special couple portrait for 120804 (Bồ iu)
-  const imgSpecial = new Image();
-  imgSpecial.crossOrigin = "anonymous";
-  imgSpecial.onload = () => {
-    state.specialAvatarImageLoaded = true;
-    state.specialAvatarImage = imgSpecial;
-    if (state.isCardUnlocked && state.isSpecialMode) {
-      renderInvitationCard();
-    }
-  };
-  imgSpecial.onerror = () => {
-    console.warn("Special avatar image failed to load.");
-    state.specialAvatarImageLoaded = false;
-  };
-  imgSpecial.src = CARD_CONFIG.specialAvatarSrc;
+  loadSpecialAvatar();
 }
 
 // ==========================================
@@ -750,9 +775,18 @@ function drawCenterAvatarCircle(ctx, cx, cy, radius) {
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.clip();
 
-  const activeImg = (state.isSpecialMode && state.specialAvatarImageLoaded && state.specialAvatarImage)
-    ? state.specialAvatarImage
-    : ((state.avatarImageLoaded && state.avatarImage) ? state.avatarImage : null);
+  let activeImg = null;
+  if (state.isSpecialMode) {
+    if (state.specialAvatarImageLoaded && state.specialAvatarImage) {
+      activeImg = state.specialAvatarImage;
+    } else {
+      loadSpecialAvatar();
+    }
+  } else {
+    if (state.avatarImageLoaded && state.avatarImage) {
+      activeImg = state.avatarImage;
+    }
+  }
 
   if (activeImg) {
     const img = activeImg;
