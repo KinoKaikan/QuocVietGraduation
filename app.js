@@ -29,11 +29,12 @@ const CARD_CONFIG = {
 
 // Global App State
 const state = {
-  currentGuestName: "Nguyễn Văn A",
+  currentGuestName: "",
   googleUser: null, // { name, email, picture, sub }
   avatarImageLoaded: false,
   avatarImage: null,
-  isRendering: false
+  isRendering: false,
+  isCardUnlocked: false
 };
 
 // Pre-generated starry particles on canvas for consistent shimmer
@@ -59,14 +60,45 @@ document.addEventListener('DOMContentLoaded', () => {
   // Ensure Vietnamese-supported Google Fonts are fully ready before drawing
   if (document.fonts) {
     document.fonts.ready.then(() => {
-      renderInvitationCard();
+      if (state.isCardUnlocked) {
+        renderInvitationCard();
+      }
     }).catch(() => {
-      renderInvitationCard();
+      if (state.isCardUnlocked) {
+        renderInvitationCard();
+      }
     });
-  } else {
-    setTimeout(renderInvitationCard, 500);
   }
 });
+
+// ==========================================
+// CARD VISIBILITY & UNLOCK CONTROLLER
+// ==========================================
+/**
+ * Unlocks and smoothly reveals the invitation card section
+ */
+function unlockAndShowCard(guestName, isSecret = false, shouldScroll = true) {
+  state.isCardUnlocked = true;
+  if (guestName) {
+    state.currentGuestName = guestName;
+  }
+
+  const stage = document.getElementById('canvasStageWrapper');
+  if (stage) {
+    stage.style.display = 'flex';
+    stage.classList.remove('stage-visible');
+    void stage.offsetWidth; // Reflow to re-trigger reveal animation
+    stage.classList.add('stage-visible');
+  }
+
+  renderInvitationCard();
+
+  if (shouldScroll && stage) {
+    setTimeout(() => {
+      stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 180);
+  }
+}
 
 // ==========================================
 // ASSET PRELOADING
@@ -77,12 +109,16 @@ function setupPreloadAvatar() {
   img.onload = () => {
     state.avatarImageLoaded = true;
     state.avatarImage = img;
-    renderInvitationCard();
+    if (state.isCardUnlocked) {
+      renderInvitationCard();
+    }
   };
   img.onerror = () => {
     console.warn("Avatar image failed to load, fallback avatar circle will be used.");
     state.avatarImageLoaded = false;
-    renderInvitationCard();
+    if (state.isCardUnlocked) {
+      renderInvitationCard();
+    }
   };
   img.src = CARD_CONFIG.avatarSrc;
 }
@@ -150,7 +186,6 @@ function handleGoogleCredentialResponse(response) {
     picture: payload.picture || CARD_CONFIG.avatarSrc,
     sub: payload.sub
   };
-  state.currentGuestName = payload.name;
 
   try {
     sessionStorage.setItem('grad_google_user', JSON.stringify(state.googleUser));
@@ -159,9 +194,9 @@ function handleGoogleCredentialResponse(response) {
   }
 
   updateUIForAuthenticatedUser();
-  renderInvitationCard();
+  unlockAndShowCard(payload.name, false, true);
   triggerCelebrationConfetti();
-  showToast(`Xin chào ${payload.name}! Đã cá nhân hóa thiệp mời của bạn.`);
+  showToast(`Xin chào ${payload.name}! Đã tạo thiệp mời của bạn.`);
 }
 
 /**
@@ -196,8 +231,8 @@ function checkPersistedSession() {
       const user = JSON.parse(saved);
       if (user && user.name) {
         state.googleUser = user;
-        state.currentGuestName = user.name;
         updateUIForAuthenticatedUser();
+        unlockAndShowCard(user.name, false, false);
       }
     }
   } catch (e) {
@@ -248,13 +283,20 @@ function handleSignOut() {
   }
 
   state.googleUser = null;
-  state.currentGuestName = "Nguyễn Văn A";
+  state.currentGuestName = "";
+  state.isCardUnlocked = false;
+
+  const stage = document.getElementById('canvasStageWrapper');
+  if (stage) {
+    stage.style.display = 'none';
+    stage.classList.remove('stage-visible');
+  }
+
   const customInput = document.getElementById('customGuestInput');
-  if (customInput) customInput.value = "Nguyễn Văn A";
+  if (customInput) customInput.value = "";
 
   updateUIForAuthenticatedUser();
-  renderInvitationCard();
-  showToast("Đã đăng xuất tài khoản Google. Bạn có thể chọn tài khoản khác.");
+  showToast("Đã đăng xuất tài khoản Google. Vui lòng đăng nhập hoặc nhập tên để xem thiệp.");
 }
 
 /**
@@ -267,18 +309,19 @@ function checkUrlParameters() {
     const name = urlParams.get('name');
 
     if (code === '120804' || name === '120804') {
-      state.currentGuestName = 'Bồ iu';
       const input = document.getElementById('customGuestInput');
       if (input) input.value = 'Bồ iu';
       setTimeout(() => {
-        renderInvitationCard();
+        unlockAndShowCard('Bồ iu', true, true);
         triggerCelebrationConfetti(true);
         showToast('💖 Đã mở khóa thiệp đặc biệt dành riêng cho Bồ iu!');
-      }, 600);
+      }, 500);
     } else if (name) {
-      state.currentGuestName = name;
       const input = document.getElementById('customGuestInput');
       if (input) input.value = name;
+      setTimeout(() => {
+        unlockAndShowCard(name, false, true);
+      }, 500);
     }
   } catch (e) {
     console.error(e);
@@ -320,7 +363,8 @@ function setupUIEventListeners() {
     const handleApplyName = () => {
       let trimmed = customGuestInput.value.trim();
       if (!trimmed) {
-        showToast("Vui lòng nhập tên khách mời.");
+        showToast("Vui lòng nhập họ tên hoặc biệt danh của bạn.");
+        customGuestInput.focus();
         return;
       }
 
@@ -332,14 +376,13 @@ function setupUIEventListeners() {
         isSecret = true;
       }
 
-      state.currentGuestName = trimmed;
-      renderInvitationCard();
+      unlockAndShowCard(trimmed, isSecret, true);
       triggerCelebrationConfetti(isSecret);
 
       if (isSecret) {
         showToast("💖 Đã mở khóa thiệp đặc biệt dành riêng cho Bồ iu!");
       } else {
-        showToast(`Đã cập nhật thiệp mời cho: ${trimmed}`);
+        showToast(`Đã tạo thiệp mời thành công cho: ${trimmed}`);
       }
     };
 
@@ -361,11 +404,10 @@ function setupUIEventListeners() {
     btn.addEventListener('click', () => {
       const name = btn.getAttribute('data-name');
       if (name) {
-        state.currentGuestName = name;
         if (customGuestInput) customGuestInput.value = name;
-        renderInvitationCard();
+        unlockAndShowCard(name, false, true);
         triggerCelebrationConfetti();
-        showToast(`Đã áp dụng tên mẫu: ${name}`);
+        showToast(`Đã chọn: ${name}`);
       }
     });
   });
@@ -574,6 +616,7 @@ function drawGraduationCapIcon(ctx, cx, cy) {
  * Uses Dancing Script with complete Vietnamese diacritic glyph support!
  */
 function drawRecipientName(ctx, W, name) {
+  const safeName = (name && name.trim()) ? name.trim() : "Khách Quý";
   const nameY = 240;
 
   ctx.save();
@@ -581,8 +624,8 @@ function drawRecipientName(ctx, W, name) {
   ctx.textBaseline = "middle";
 
   let fontSize = 70;
-  if (name.length > 25) fontSize = 52;
-  else if (name.length > 18) fontSize = 60;
+  if (safeName.length > 25) fontSize = 52;
+  else if (safeName.length > 18) fontSize = 60;
 
   // Dancing Script font - flawless Vietnamese rendering
   ctx.font = `bold ${fontSize}px 'Dancing Script', cursive`;
@@ -595,7 +638,7 @@ function drawRecipientName(ctx, W, name) {
   ctx.fillStyle = nameGrad;
   ctx.shadowColor = "rgba(212, 175, 55, 0.55)";
   ctx.shadowBlur = 16;
-  ctx.fillText(name, W / 2, nameY);
+  ctx.fillText(safeName, W / 2, nameY);
 
   ctx.restore();
   drawCalligraphyUnderline(ctx, W / 2, nameY + (fontSize * 0.44));
@@ -1120,10 +1163,11 @@ function setupHolographicTilt() {
     card.style.setProperty('--sheen-pos', sheenPos);
     card.style.setProperty('--sheen-angle', sheenAngle);
 
-    // Điều chỉnh độ sáng hào quang theo góc nghiêng
-    const intensity = Math.min(1, Math.max(0.35, (Math.abs(currentTiltX) + Math.abs(currentTiltY)) / 12));
-    card.style.setProperty('--glare-opacity', `${(0.35 + intensity * 0.45).toFixed(2)}`);
-    card.style.setProperty('--sheen-opacity', `${(0.45 + intensity * 0.35).toFixed(2)}`);
+    // Điều chỉnh độ sáng hào quang theo góc nghiêng (dịu nhẹ sang trọng, không chói mắt)
+    const tiltMagnitude = Math.sqrt(currentTiltX * currentTiltX + currentTiltY * currentTiltY);
+    const intensity = Math.min(1, tiltMagnitude / 15);
+    card.style.setProperty('--glare-opacity', `${(0.10 + intensity * 0.22).toFixed(2)}`);
+    card.style.setProperty('--sheen-opacity', `${(0.12 + intensity * 0.20).toFixed(2)}`);
 
     requestAnimationFrame(renderTilt);
   }

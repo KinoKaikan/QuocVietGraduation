@@ -79,19 +79,19 @@
 
         <!-- Divider with Gold Text -->
         <div class="luxury-divider">
-          <span>HOẶC TRẢI NGHIỆM XEM TRƯỚC</span>
+          <span>HOẶC NHẬP TÊN ĐỂ TẠO THIỆP</span>
         </div>
 
         <!-- Quick Demo / Custom Name Form -->
         <div class="quick-input-group">
           <label for="customGuestInput" class="input-label">
-            <i class="fa-solid fa-user-pen"></i> Nhập trực tiếp tên khách mời hoặc biệt danh:
+            <i class="fa-solid fa-user-pen"></i> Nhập trực tiếp họ tên của bạn hoặc biệt danh:
           </label>
           <div class="input-actions-row">
             <input type="text" id="customGuestInput" class="gold-input"
-              placeholder="VD: Nghiêm Vũ Hoàng Long, Thầy Cô, Bạn Thân..." value="Nghiêm Vũ Hoàng Long" maxlength="45">
+              placeholder="Nhập tên của bạn để nhận thiệp..." value="" maxlength="45">
             <button id="applyCustomNameBtn" class="btn btn-gold">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Tạo Thiệp Ngay
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Xem Thiệp Mời
             </button>
           </div>
 
@@ -117,7 +117,7 @@
               <i class="fa-solid fa-circle-check"></i> Đã xác thực tài khoản Google
             </div>
             <h3 class="user-greeting-name">
-              Xin chào, <span id="displayNameText" class="gold-highlight">Nguyễn Văn A</span>! 🎉
+              Xin chào, <span id="displayNameText" class="gold-highlight">Khách Quý</span>! 🎉
             </h3>
             <p class="user-subtext" id="userEmailText">
               Thiệp mời tốt nghiệp chính thức của bạn đã được tạo độc quyền bên dưới:
@@ -129,8 +129,8 @@
         </button>
       </div>
 
-      <!-- Card Display & Canvas Stage with 3D Holographic Foil Tilt -->
-      <div class="canvas-stage-wrapper" id="canvasStageWrapper">
+      <!-- Card Display & Canvas Stage with 3D Holographic Foil Tilt (Ẩn mặc định, chỉ hiện khi nhập tên hoặc login) -->
+      <div class="canvas-stage-wrapper" id="canvasStageWrapper" style="display: none;">
         <div class="stage-frame" id="holoCard">
           <!-- Holographic Foil Glare & Rainbow Sheen (Hiệu ứng chiếu sáng thẻ bài) -->
           <div class="holo-glare" id="holoGlare"></div>
