@@ -15,11 +15,11 @@ const CARD_CONFIG = {
   height: 1500,
   avatarSrc: "assets/portrait.jpg",
   hostName: "TRẦN QUỐC VIỆT",
-  hostTitle: "Kỹ Sư Kỹ Thuật Phần Mềm • ĐH FPT Cần Thơ",
+  hostTitle: "Kỹ Thuật Phần Mềm • ĐH FPT Cần Thơ",
   dateHeader: "THÁNG 10",
   dayOfWeek: "CHỦ NHẬT",
   dayOfMonth: "25",
-  time: "10:00 - 11:00",
+  time: "11:30 - 12:00",
   year: "2026",
   venueName: "Hội Trường Lớn - Trường Đại Học FPT Cần Thơ",
   venueAddressLine1: "Số 600, đường Nguyễn Văn Cừ nối dài, phường An Bình,",
@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupPreloadAvatar();
   setupUIEventListeners();
   checkPersistedSession();
+  checkUrlParameters();
   setupGoogleIdentityServices();
 
   // Ensure Vietnamese-supported Google Fonts are fully ready before drawing
@@ -216,7 +217,7 @@ function updateUIForAuthenticatedUser() {
   if (state.googleUser) {
     if (displayNameText) displayNameText.textContent = state.googleUser.name;
     if (userEmailText) {
-      userEmailText.textContent = state.googleUser.email 
+      userEmailText.textContent = state.googleUser.email
         ? `Tài khoản: ${state.googleUser.email} • Thiệp mời đã sẵn sàng bên dưới:`
         : "Thiệp mời tốt nghiệp chính thức của bạn đã được tạo độc quyền bên dưới:";
     }
@@ -255,6 +256,34 @@ function handleSignOut() {
   showToast("Đã đăng xuất tài khoản Google. Bạn có thể chọn tài khoản khác.");
 }
 
+/**
+ * Check URL query parameters for secret code or direct name (e.g. ?code=120804 or ?name=...)
+ */
+function checkUrlParameters() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code') || urlParams.get('pass');
+    const name = urlParams.get('name');
+
+    if (code === '120804' || name === '120804') {
+      state.currentGuestName = 'Bồ iu';
+      const input = document.getElementById('customGuestInput');
+      if (input) input.value = 'Bồ iu';
+      setTimeout(() => {
+        renderInvitationCard();
+        triggerCelebrationConfetti(true);
+        showToast('💖 Đã mở khóa thiệp đặc biệt dành riêng cho Bồ iu!');
+      }, 600);
+    } else if (name) {
+      state.currentGuestName = name;
+      const input = document.getElementById('customGuestInput');
+      if (input) input.value = name;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 // ==========================================
 // UI EVENT LISTENERS
 // ==========================================
@@ -288,20 +317,40 @@ function setupUIEventListeners() {
 
   if (applyCustomNameBtn && customGuestInput) {
     const handleApplyName = () => {
-      const trimmed = customGuestInput.value.trim();
+      let trimmed = customGuestInput.value.trim();
       if (!trimmed) {
         showToast("Vui lòng nhập tên khách mời.");
         return;
       }
+
+      // Secret Code 120804 -> Bồ iu
+      let isSecret = false;
+      if (trimmed === "120804") {
+        trimmed = "Bồ iu";
+        customGuestInput.value = "Bồ iu";
+        isSecret = true;
+      }
+
       state.currentGuestName = trimmed;
       renderInvitationCard();
-      triggerCelebrationConfetti();
-      showToast(`Đã cập nhật thiệp mời cho: ${trimmed}`);
+      triggerCelebrationConfetti(isSecret);
+
+      if (isSecret) {
+        showToast("💖 Đã mở khóa thiệp đặc biệt dành riêng cho Bồ iu!");
+      } else {
+        showToast(`Đã cập nhật thiệp mời cho: ${trimmed}`);
+      }
     };
 
     applyCustomNameBtn.addEventListener('click', handleApplyName);
     customGuestInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleApplyName();
+    });
+    // Auto-detect when 120804 is typed
+    customGuestInput.addEventListener('input', () => {
+      if (customGuestInput.value.trim() === "120804") {
+        handleApplyName();
+      }
     });
   }
 
@@ -475,7 +524,7 @@ function drawTopSection(ctx, W) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.font = "bold 34px 'Playfair Display', Georgia, serif";
-  
+
   const goldGrad = createGoldGradient(ctx, W / 2 - 120, topY, W / 2 + 120, topY);
   ctx.fillStyle = goldGrad;
   ctx.shadowColor = "rgba(212, 175, 55, 0.4)";
@@ -664,7 +713,7 @@ function drawCenterAvatarCircle(ctx, cx, cy, radius) {
 
   // Outer Ornate Double Gold Ring
   const ringGrad = createGoldGradient(ctx, cx - radius, cy - radius, cx + radius, cy + radius);
-  
+
   ctx.lineWidth = 4;
   ctx.strokeStyle = ringGrad;
   ctx.shadowColor = "rgba(212, 175, 55, 0.5)";
@@ -936,14 +985,23 @@ async function copyCanvasCardToClipboard() {
 // ==========================================
 // CELEBRATION EFFECTS & TOAST
 // ==========================================
-function triggerCelebrationConfetti() {
+function triggerCelebrationConfetti(isHeart = false) {
   if (typeof confetti === 'function') {
-    confetti({
-      particleCount: 50,
-      spread: 70,
-      origin: { y: 0.65 },
-      colors: ['#D4AF37', '#FFE58F', '#F39C12', '#FFFFFF', '#162A52']
-    });
+    if (isHeart) {
+      confetti({
+        particleCount: 75,
+        spread: 90,
+        origin: { y: 0.65 },
+        colors: ['#ff4d6d', '#ff758f', '#ff8fa3', '#D4AF37', '#FFE58F', '#FFFFFF']
+      });
+    } else {
+      confetti({
+        particleCount: 50,
+        spread: 70,
+        origin: { y: 0.65 },
+        colors: ['#D4AF37', '#FFE58F', '#F39C12', '#FFFFFF', '#162A52']
+      });
+    }
   }
 }
 

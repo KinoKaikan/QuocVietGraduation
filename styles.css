@@ -55,13 +55,9 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--bg-deep);
-  background-image: 
-    radial-gradient(circle at 50% 0%, #1a3264 0%, transparent 60%),
-    radial-gradient(circle at 10% 40%, #0d2047 0%, transparent 50%),
-    radial-gradient(circle at 90% 70%, #152c59 0%, transparent 50%),
-    linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-navy-dark) 40%, var(--bg-navy-light) 70%, var(--bg-deep) 100%);
-  background-attachment: fixed;
+  background: linear-gradient(-45deg, #071126, #0b1c3e, #132752, #1b376d, #0f2249, #071126);
+  background-size: 350% 350%;
+  animation: gradientFlow 14s ease infinite;
   color: var(--text-white);
   min-height: 100vh;
   line-height: 1.6;
@@ -69,37 +65,71 @@ body {
   position: relative;
 }
 
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 /* Background Ambient Orbs & Stars */
 .glow-orb {
   position: fixed;
   border-radius: 50%;
-  filter: blur(120px);
+  filter: blur(100px);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.45;
-  animation: floatOrb 18s ease-in-out infinite alternate;
+  opacity: 0.5;
 }
 
 .orb-1 {
-  width: 450px;
-  height: 450px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, rgba(22, 42, 82, 0) 70%);
-  top: -100px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.35) 0%, rgba(22, 42, 82, 0) 70%);
+  top: -80px;
   left: 10%;
+  animation: floatOrb1 16s ease-in-out infinite alternate;
 }
 
 .orb-2 {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(30, 60, 120, 0.5) 0%, rgba(11, 27, 61, 0) 70%);
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.45) 0%, rgba(11, 27, 61, 0) 70%);
   bottom: 5%;
   right: 5%;
+  animation: floatOrb2 20s ease-in-out infinite alternate;
 }
 
-@keyframes floatOrb {
+.orb-3 {
+  width: 440px;
+  height: 440px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(11, 27, 61, 0) 70%);
+  top: 50%;
+  left: -80px;
+  animation: floatOrb3 18s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb1 {
   0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(30px, 40px) scale(1.1); }
-  100% { transform: translate(-20px, 20px) scale(0.95); }
+  50% { transform: translate(40px, 50px) scale(1.15); }
+  100% { transform: translate(-30px, 20px) scale(0.92); }
+}
+
+@keyframes floatOrb2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, -40px) scale(1.12); }
+  100% { transform: translate(25px, -60px) scale(0.95); }
+}
+
+@keyframes floatOrb3 {
+  0% { transform: translate(0, 0) scale(0.9); }
+  50% { transform: translate(60px, -30px) scale(1.1); }
+  100% { transform: translate(20px, 40px) scale(1); }
 }
 
 .ambient-stars {
