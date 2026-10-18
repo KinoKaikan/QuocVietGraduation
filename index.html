@@ -3,17 +3,17 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Thiệp Mời Lễ Tốt Nghiệp - Trần Quốc Việt | FPT University</title>
-  <meta name="description" content="Trang tạo thiệp mời dự lễ tốt nghiệp cá nhân hóa của Trần Quốc Việt">
+  <meta name="description" content="Trang tạo thiệp mời dự lễ tốt nghiệp cá nhân hóa & Game Pixel Runner của Trần Quốc Việt">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
 
-  <!-- Google Fonts với chuẩn Tiếng Việt 100% (Playfair Display, Lora, Dancing Script, Be Vietnam Pro, Montserrat) -->
+  <!-- Google Fonts: 100% Chuẩn Tiếng Việt Toàn Diện (Be Vietnam Pro, Playfair Display, Dancing Script) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Dancing+Script:wght@600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Dancing+Script:wght@600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Montserrat:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap"
     rel="stylesheet">
 
   <!-- FontAwesome Icons -->
@@ -22,10 +22,10 @@
   <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
-  <!-- Google Identity Services (GSI) Client -->
+  <!-- Google Identity Services (GIS) Client -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <link rel="stylesheet" href="styles.css?v=20261014b">
+  <link rel="stylesheet" href="styles.css?v=20261020">
 </head>
 
 <body>
@@ -44,26 +44,30 @@
       </div>
 
       <h1 class="main-title">
-        KÍNH MỜI BẠN ĐẾN DỰ LỄ TỐT NGHIỆP CỦA <span class="gold-text">TRẦN QUỐC VIỆT</span>
+        THÂN MỜI BẠN ĐẾN DỰ LỄ TỐT NGHIỆP CỦA <span class="gold-text">QUỐC VIỆT</span>
       </h1>
 
       <p class="hero-subtitle">
-        Khép lại hành trình 4 năm đại học với biết bao kỷ niệm và nỗ lực. Trân trọng kính mời bạn cùng đến chung vui
-        trong ngày lễ tốt nghiệp!
+        Khép lại hành trình 4 năm đại học với biết bao nỗ lực và kỷ niệm. Đăng nhập Google để đồng hành cùng nhân vật
+        cử nhân vượt chướng ngại vật mở khóa thiệp mời độc quyền!
       </p>
     </header>
 
-    <!-- Main Card Generator Interface -->
-    <section class="generator-section">
-      <!-- State 1: Google Authentication Container (Before Login) -->
-      <div id="authSection" class="glass-card auth-card">
+    <!-- Main Container Flow -->
+    <div class="generator-section">
+
+      <!-- ======================================================== -->
+      <!-- STATE 1: GOOGLE AUTHENTICATION ONLY (KHÔNG NHẬP TAY) -->
+      <!-- ======================================================== -->
+      <section id="authSection" class="glass-card auth-card">
         <div class="card-ornament top-ornament">
-          <i class="fa-solid fa-certificate"></i>
+          <i class="fa-solid fa-graduation-cap"></i>
         </div>
 
-        <h2 class="auth-title">Đăng Nhập Để Nhận Thiệp Cá Nhân Hóa</h2>
+        <h2 class="auth-title">Đăng Nhập Bằng Google Để Vào Game</h2>
         <p class="auth-desc">
-          Vui lòng đăng nhập với tài khoản Google để hệ thống tự động trích xuất tên chính thức của bạn lên thiệp mời.
+          Vui lòng đăng nhập tài khoản Google để hệ thống trích xuất tên chính thức của bạn lên nhân vật
+          và cá nhân hóa trên tấm thiệp mời tốt nghiệp.
         </p>
 
         <!-- Official Google Sign-In Button Container -->
@@ -72,136 +76,340 @@
             <!-- Rendered dynamically by Google Identity Services -->
           </div>
           <p class="auth-hint">
-            <i class="fa-solid fa-shield-halved"></i> Đăng nhập an toàn qua Google
+            <i class="fa-solid fa-shield-halved"></i> Đăng nhập bảo mật qua Google Identity Services
+          </p>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- STATE 2: GIẢ LẬP MÁY CHƠI GAME CẦM TAY (RETRO HANDHELD CONSOLE) -->
+      <!-- ======================================================== -->
+      <section id="gameSection" class="game-section-card" style="display: none;">
+        <!-- Logged-in User Header Bar -->
+        <div class="game-user-bar glass-card">
+          <div class="user-info-cluster">
+            <div class="avatar-ring-sm" id="gameUserAvatarRing">
+              <img id="gameUserAvatar" src="" alt="Avatar" class="user-avatar-sm" style="display: none;">
+              <i id="gameUserAvatarIcon" class="fa-solid fa-graduation-cap default-avatar-icon"></i>
+            </div>
+            <div class="user-meta-compact">
+              <span class="player-tag"><i class="fa-solid fa-gamepad"></i> TÂN CỬ NHÂN</span>
+              <h3 class="player-name" id="gamePlayerName">Khách Quý</h3>
+            </div>
+          </div>
+
+          <div class="game-bar-actions">
+            <button id="skipToCardBtn" class="btn btn-sm btn-outline-gold" title="Xem thiệp ngay không cần chơi">
+              <i class="fa-solid fa-envelope-open-text"></i> Xem Thiệp Dưới Đây
+            </button>
+            <button id="switchAccountBtnTop" class="btn btn-sm btn-outline-danger" title="Đổi tài khoản khác">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Đổi tài khoản
+            </button>
+          </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- HANDHELD GAME CONSOLE HARDWARE CASING (MÁY CHƠI GAME) -->
+        <!-- ======================================================== -->
+        <div class="handheld-console">
+          <!-- Console Top Bezel / Power LED -->
+          <div class="console-top-bar">
+            <div class="power-indicator">
+              <span class="led-light led-power"></span>
+              <span class="console-label">POWER</span>
+            </div>
+            <div class="console-branding">
+              <i class="fa-solid fa-graduation-cap gold-text"></i>
+              <span class="brand-text">GRADUATION BOY ADVANCE</span>
+              <span class="version-tag">2026</span>
+            </div>
+            <div class="headphone-jack">
+              <i class="fa-solid fa-headphones"></i>
+            </div>
+          </div>
+
+          <!-- Console Screen Bezel -->
+          <div class="console-screen-housing">
+            <!-- Screen Header HUD -->
+            <div class="screen-hud">
+              <!-- Hearts (Mạng sống) -->
+              <div class="hud-hearts-box" title="Số mạng còn lại">
+                <span class="hud-label">MẠNG:</span>
+                <div id="hudHearts" class="hud-hearts">
+                  <i class="fa-solid fa-heart heart-active"></i>
+                  <i class="fa-solid fa-heart heart-active"></i>
+                  <i class="fa-solid fa-heart heart-active"></i>
+                </div>
+              </div>
+
+              <!-- Score & Milestone Progress Bar -->
+              <div class="hud-progress-group">
+                <div class="progress-labels">
+                  <span class="milestone-badge">MỤC TIÊU: 2026 ĐIỂM</span>
+                  <span class="score-display">ĐIỂM: <strong id="hudScore" class="gold-glow-text">0</strong> / 2026</span>
+                </div>
+                <div class="progress-track">
+                  <div id="hudProgressBar" class="progress-fill" style="width: 0%;">
+                    <span class="progress-sparkle"></span>
+                  </div>
+                  <div class="milestone-tick tick-25"><span>500</span></div>
+                  <div class="milestone-tick tick-50"><span>1000</span></div>
+                  <div class="milestone-tick tick-75"><span>1500</span></div>
+                  <div class="milestone-tick tick-100"><span>🎓 2026</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Canvas Stage -->
+            <div class="screen-canvas-wrapper" id="gameCanvasWrapper">
+              <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+              <!-- Start Overlay -->
+              <div id="gameStartOverlay" class="canvas-overlay start-overlay">
+                <div class="overlay-box">
+                  <div class="overlay-badge-icon">🎓</div>
+                  <h3 class="overlay-title">ĐƯỜNG ĐẾN NGÀY TỐT NGHIỆP</h3>
+                  <p class="overlay-desc">
+                    Sử dụng các nút bấm trên máy: bấm <strong>A (NHẢY)</strong> để nhảy qua chướng ngại vật mặt đất và <strong>B (CÚI)</strong>
+                    để né chướng ngại vật trên không! Nhặt <strong class="text-danger">❤️ Trái Tim</strong> để hồi sinh mạng và cán đích <strong>2026 điểm</strong>!
+                  </p>
+                  <button id="startGameBtn" class="btn btn-console-action">
+                    <i class="fa-solid fa-play"></i> BẮT ĐẦU CHƠI
+                  </button>
+                </div>
+              </div>
+
+              <!-- Game Over Overlay -->
+              <div id="gameOverOverlay" class="canvas-overlay gameover-overlay" style="display: none;">
+                <div class="overlay-box">
+                  <div class="overlay-badge-icon">💥</div>
+                  <h3 class="overlay-title text-danger">CHƯA KỊP TỐT NGHIỆP!</h3>
+                  <p class="overlay-desc" id="gameOverReason">
+                    Bạn đã hết 3 mạng. Hãy thử lại để chinh phục chặng đường 2026 điểm nhé!
+                  </p>
+                  <div class="overlay-actions">
+                    <button id="restartGameBtn" class="btn btn-console-action">
+                      <i class="fa-solid fa-rotate-left"></i> CHƠI LẠI
+                    </button>
+                    <button id="skipAfterLoseBtn" class="btn btn-secondary">
+                      <i class="fa-solid fa-envelope-open"></i> XEM THIỆP PHÍA DƯỚI
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Milestone 2026 Victory Overlay (Tối ưu nhỏ gọn, vừa vặn trên điện thoại) -->
+              <div id="gameVictoryOverlay" class="canvas-overlay victory-overlay-compact" style="display: none;">
+                <div class="compact-victory-card">
+                  <div class="compact-victory-badge">🎓✨</div>
+                  <div class="compact-victory-content">
+                    <h3 class="compact-victory-title gold-glow-text">🎉 CHÍNH THỨC TỐT NGHIỆP 2026!</h3>
+                    <p class="compact-victory-desc">Xuất sắc! Thiệp mời chính thức của bạn đã sẵn sàng ngay bên dưới:</p>
+                  </div>
+                  <button id="scrollToCardBtn" class="btn btn-gold btn-compact-action pulse-btn">
+                    <i class="fa-solid fa-arrow-down"></i> XEM THIỆP MỜI BÊN DƯỚI
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ======================================================== -->
+          <!-- HANDHELD CONTROLLER PAD (BÀN ĐIỀU KHIỂN NÚT BẤM THỰC TẾ) -->
+          <!-- ======================================================== -->
+          <div class="console-controls-deck">
+            <!-- Left: Directional D-Pad (Thao tác Cúi & Nhảy) -->
+            <div class="dpad-container">
+              <div class="dpad">
+                <button id="btnDpadUp" class="dpad-btn dpad-up" title="Nhảy lên">
+                  <i class="fa-solid fa-caret-up"></i>
+                </button>
+                <div class="dpad-center"></div>
+                <button id="btnDpadDown" class="dpad-btn dpad-down" title="Cúi người">
+                  <i class="fa-solid fa-caret-down"></i>
+                </button>
+                <button id="btnDpadLeft" class="dpad-btn dpad-left" title="Trái">
+                  <i class="fa-solid fa-caret-left"></i>
+                </button>
+                <button id="btnDpadRight" class="dpad-btn dpad-right" title="Phải">
+                  <i class="fa-solid fa-caret-right"></i>
+                </button>
+              </div>
+              <span class="control-sublabel">D-PAD (⬆ NHẢY • ⬇ CÚI)</span>
+            </div>
+
+            <!-- Center: SELECT / START & Speaker Grill -->
+            <div class="center-controls-cluster">
+              <div class="speaker-grill">
+                <div class="speaker-hole"></div><div class="speaker-hole"></div><div class="speaker-hole"></div>
+                <div class="speaker-hole"></div><div class="speaker-hole"></div><div class="speaker-hole"></div>
+                <div class="speaker-hole"></div><div class="speaker-hole"></div><div class="speaker-hole"></div>
+              </div>
+
+              <div class="pill-buttons-row">
+                <div class="pill-btn-group">
+                  <button id="btnSoundSelect" class="pill-btn" title="Bật/Tắt âm thanh">
+                    <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+                  </button>
+                  <span class="pill-label">ÂM THANH</span>
+                </div>
+                <div class="pill-btn-group">
+                  <button id="btnPauseStart" class="pill-btn" title="Tạm dừng / Tiếp tục">
+                    <i class="fa-solid fa-pause" id="pauseIcon"></i>
+                  </button>
+                  <span class="pill-label">TẠM DỪNG</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Action Buttons A (Nhảy) & B (Cúi Người) -->
+            <div class="action-buttons-container">
+              <div class="action-buttons-pair">
+                <!-- Button B (CÚI NGƯỜI) -->
+                <div class="arcade-btn-cluster">
+                  <button id="btnActionB" class="arcade-round-btn btn-b" title="Cúi người">
+                    <span>B</span>
+                  </button>
+                  <span class="arcade-btn-label">CÚI (DOWN)</span>
+                </div>
+
+                <!-- Button A (NHẢY) -->
+                <div class="arcade-btn-cluster">
+                  <button id="btnActionA" class="arcade-round-btn btn-a" title="Nhảy lên">
+                    <span>A</span>
+                  </button>
+                  <span class="arcade-btn-label">NHẢY (SPACE)</span>
+                </div>
+              </div>
+              <span class="control-sublabel">NÚT HÀNH ĐỘNG</span>
+            </div>
+          </div>
+
+          <!-- Console Item & Obstacle Quick Guide -->
+          <div class="console-item-guide">
+            <div class="guide-item">
+              <span class="guide-tag tag-jump"><i class="fa-solid fa-arrow-up"></i> NHẢY NÉ:</span>
+              <span>💻 Đồ Án, 📑 Báo Cáo</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-tag tag-duck"><i class="fa-solid fa-arrow-down"></i> CÚI NÉ:</span>
+              <span>📝 Thi Lại (Bay), ⏰ Deadline</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-tag tag-heart"><i class="fa-solid fa-heart"></i> HỒI SINH:</span>
+              <span>❤️ Trái Tim (+1 Mạng)</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-tag tag-point"><i class="fa-solid fa-star"></i> ĐIỂM:</span>
+              <span>🌟 A+ (+100), 📜 Bằng Khen (+150), ☕ Cà Phê (+50)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- STATE 3: THIỆP MỜI TỐT NGHIỆP HIỆN TRỰC TIẾP PHÍA DƯỚI MÁY CHƠI GAME -->
+      <!-- (Không dùng modal pop-up để tránh người chơi bấm nhầm tắt) -->
+      <!-- ======================================================== -->
+      <section id="invitationSection" class="glass-card invitation-section-card" style="display: none;">
+        <!-- Card Section Header -->
+        <div class="invitation-header">
+          <div class="celebration-badge-row">
+            <span class="celebration-pill">
+              <i class="fa-solid fa-award"></i> THIỆP MỜI LỄ TỐT NGHIỆP CHÍNH THỨC
+            </span>
+          </div>
+          <h2 class="invitation-main-heading">
+            CHÚC MỪNG TÂN CỬ NHÂN: <span id="cardGuestName" class="gold-text">Khách Quý</span> 🎉
+          </h2>
+          <p class="invitation-desc">
+            Tấm thiệp độc quyền dưới đây được tạo riêng cho bạn. Hãy lưu lại hoặc thêm vào lịch để cùng chung vui nhé!
           </p>
         </div>
 
-        <!-- Divider with Gold Text -->
-        <div class="luxury-divider">
-          <span>HOẶC NHẬP TÊN ĐỂ TẠO THIỆP</span>
+        <!-- 2 NÚT BẮT BUỘC THEO YÊU CẦU (Mục 1.4) -->
+        <div class="invitation-mandatory-actions">
+          <button id="btnViewCeremonyDetails" class="btn btn-gold btn-action-pill">
+            <i class="fa-solid fa-calendar-days"></i> Xem Lại Chi Tiết Buổi Lễ
+          </button>
+          <button id="btnReplayGame" class="btn btn-secondary btn-action-pill">
+            <i class="fa-solid fa-rotate-left"></i> Chơi Lại Game
+          </button>
         </div>
 
-        <!-- Quick Demo / Custom Name Form -->
-        <div class="quick-input-group">
-          <label for="customGuestInput" class="input-label">
-            <i class="fa-solid fa-user-pen"></i> Nhập trực tiếp họ tên của bạn hoặc biệt danh:
-          </label>
-          <div class="input-actions-row">
-            <input type="text" id="customGuestInput" class="gold-input" placeholder="Nhập tên của bạn để nhận thiệp..."
-              value="" maxlength="45">
-            <button id="applyCustomNameBtn" class="btn btn-gold">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Xem Thiệp Mời
-            </button>
-          </div>
+        <!-- Card Stage with 3D Holographic Foil Tilt -->
+        <div class="card-stage-container">
+          <div class="stage-frame" id="holoCard">
+            <div class="holo-glare" id="holoGlare"></div>
+            <div class="holo-sheen" id="holoSheen"></div>
 
-          <!-- Quick presets tags -->
-          <div class="preset-tags">
-            <span class="preset-label">Gợi ý nhanh:</span>
-            <button type="button" class="tag-btn" data-name="Bạn Của Việt Đẹp Trai">Bạn Của Việt</button>
-            <button type="button" class="tag-btn" data-name="Gia Đình Thân Yêu">Gia Đình Thân Yêu</button>
-            <button type="button" class="tag-btn" data-name="Thầy Cô Kính Mến">Thầy Cô Kính Mến</button>
-            <button type="button" class="tag-btn" data-name="Cốt Ai Nấy Hốt">Cốt</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- State 2: Logged-in Greeting Banner -->
-      <div id="userProfileBanner" class="glass-card user-profile-banner" style="display: none;">
-        <div class="user-info-cluster">
-          <div class="avatar-ring" id="userAvatarContainer">
-            <img id="userAvatarImg" src="assets/portrait.jpg" alt="Avatar" class="google-user-avatar">
-          </div>
-          <div class="user-text-meta">
-            <div class="welcome-badge">
-              <i class="fa-solid fa-circle-check"></i> Đã xác thực tài khoản Google
+            <div id="canvasLoader" class="canvas-loader">
+              <div class="spinner-gold"></div>
+              <p>Đang dựng thiệp mời tốt nghiệp độ nét cao...</p>
             </div>
-            <h3 class="user-greeting-name">
-              Xin chào, <span id="displayNameText" class="gold-highlight">Khách Quý</span>! 🎉
-            </h3>
-            <p class="user-subtext" id="userEmailText">
-              Thiệp mời tốt nghiệp chính thức của bạn đã được tạo độc quyền bên dưới:
-            </p>
-          </div>
-        </div>
-        <button id="switchAccountBtnTop" class="btn btn-outline-gold" title="Đổi tài khoản khác">
-          <i class="fa-solid fa-arrow-right-from-bracket"></i> Đổi tài khoản
-        </button>
-      </div>
 
-      <!-- Card Display & Canvas Stage with 3D Holographic Foil Tilt (Ẩn mặc định, chỉ hiện khi nhập tên hoặc login) -->
-      <div class="canvas-stage-wrapper" id="canvasStageWrapper" style="display: none;">
-        <div class="stage-frame" id="holoCard">
-          <!-- Holographic Foil Glare & Rainbow Sheen (Hiệu ứng chiếu sáng thẻ bài) -->
-          <div class="holo-glare" id="holoGlare"></div>
-          <div class="holo-sheen" id="holoSheen"></div>
-
-          <!-- Canvas Loading Indicator -->
-          <div id="canvasLoader" class="canvas-loader">
-            <div class="spinner-gold"></div>
-            <p>Đang tải phông chữ và dựng thiệp mời...</p>
+            <!-- Canvas 1000x1500 -->
+            <canvas id="invitationCanvas" width="1000" height="1500"></canvas>
           </div>
 
-          <!-- The HTML5 Canvas for High-Resolution Invitation Card -->
-          <canvas id="invitationCanvas" width="1000" height="1500"></canvas>
-        </div>
-
-        <!-- Action Controls -->
-        <div class="action-controls-card glass-card">
-          <div class="controls-group primary-actions">
-            <!-- Button 1: Download Card (PNG) -->
-            <button id="downloadBtn" class="btn btn-gold btn-large">
+          <!-- Download, Copy, Calendar Actions -->
+          <div class="card-extra-actions">
+            <button id="downloadBtn" class="btn btn-gold">
               <i class="fa-solid fa-download"></i> Tải Thiệp Về (PNG)
             </button>
-
-            <!-- Copy to Clipboard -->
-            <button id="copyImageBtn" class="btn btn-secondary btn-large">
+            <button id="copyImageBtn" class="btn btn-secondary">
               <i class="fa-solid fa-copy"></i> Sao Chép Ảnh
             </button>
-          </div>
-
-          <div class="controls-group secondary-actions">
-            <!-- Add to Google Calendar (11:30 - 12:00 Vietnam Time = 04:30 - 05:00 UTC) -->
             <a id="googleCalendarBtn" class="btn btn-outline-gold" target="_blank" rel="noopener noreferrer"
               href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=L%E1%BB%85+T%E1%BB%91t+Nghi%E1%BB%87p+C%E1%BB%A7a+Tr%E1%BA%A7n+Qu%E1%BB%91c+Vi%E1%BB%87t&dates=20261025T043000Z/20261025T050000Z&details=K%C3%ADnh+m%E1%BB%9Di+b%E1%BA%A1n+%C4%91%E1%BA%BFn+d%E1%BB%B1+L%E1%BB%85+T%E1%BB%91t+Nghi%E1%BB%87p+c%E1%BB%A7a+Tr%E1%BA%A7n+Qu%E1%BB%91c+Vi%E1%BB%87t+t%E1%BA%A1i+%C4%90%E1%BA%A1i+H%E1%BB%8Dc+FPT+C%E1%BA%A7n+Th%C6%A1.&location=S%E1%BB%91+600%2C+%C4%91%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+V%C4%83n+C%E1%BB%AB+n%E1%BB%91i+d%C3%A0i%2C+ph%C6%B0%E1%BB%9Dng+An+B%C3%ACnh%2C+qu%E1%BA%ADn+Ninh+Ki%E1%BB%81u%2C+TP+C%E1%BA%A7n+Th%C6%A1">
-              <i class="fa-regular fa-calendar-plus"></i> Thêm vào Google Calendar
-            </a>
-
-            <!-- Button 2: Reset Google Auth / Switch Account -->
-            <button id="switchAccountBtn" class="btn btn-outline-danger">
-              <i class="fa-solid fa-rotate-left"></i> Đổi tài khoản Google
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Info Cards (Venue & Date) - Removed "Liên Hệ Tân Kỹ Sư" -->
-      <div class="info-grid">
-        <div class="info-box glass-card">
-          <div class="info-icon">
-            <i class="fa-regular fa-calendar-check"></i>
-          </div>
-          <div class="info-content">
-            <h4>Thời Gian Buổi Lễ</h4>
-            <p class="highlight-date">11:30 - 12:00 | Chủ Nhật</p>
-            <p class="sub-date">Ngày 25 tháng 10 năm 2026</p>
-          </div>
-        </div>
-
-        <div class="info-box glass-card">
-          <div class="info-icon">
-            <i class="fa-solid fa-location-dot"></i>
-          </div>
-          <div class="info-content">
-            <h4>Địa Điểm Tổ Chức</h4>
-            <p class="highlight-location">Đại Học FPT Cần Thơ</p>
-            <p class="sub-address">Số 600 Nguyễn Văn Cừ nối dài, P. An Bình, Q. Ninh Kiều, TP. Cần Thơ</p>
-            <a href="https://maps.google.com/?q=Đại+học+FPT+Cần+Thơ" target="_blank" class="map-link">
-              <i class="fa-solid fa-diamond-turn-right"></i> Xem chỉ đường trên Google Maps
+              <i class="fa-regular fa-calendar-plus"></i> Thêm vào Calendar
             </a>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- ======================================================== -->
+      <!-- CEREMONY DETAILS SECTION (THỜI GIAN & ĐỊA ĐIỂM) -->
+      <!-- ======================================================== -->
+      <section id="ceremonyDetails" class="ceremony-details-section">
+        <div class="section-title-wrap">
+          <span class="sub-badge"><i class="fa-solid fa-bell"></i> THÔNG TIN BUỔI LỄ</span>
+          <h2 class="section-heading">THỜI GIAN & ĐỊA ĐIỂM TỔ CHỨC</h2>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-box glass-card">
+            <div class="info-icon">
+              <i class="fa-regular fa-calendar-check"></i>
+            </div>
+            <div class="info-content">
+              <h4>Thời Gian Buổi Lễ</h4>
+              <p class="highlight-date">11:30 - 12:00 | Chủ Nhật</p>
+              <p class="sub-date">Ngày 25 tháng 10 năm 2026</p>
+              <div class="info-tag-row">
+                <span class="info-tag"><i class="fa-solid fa-clock"></i> Đúng giờ nhé</span>
+                <span class="info-tag"><i class="fa-solid fa-camera"></i> Chụp ảnh kỷ niệm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box glass-card">
+            <div class="info-icon">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <div class="info-content">
+              <h4>Địa Điểm Tổ Chức</h4>
+              <p class="highlight-location">Đại Học FPT Cần Thơ</p>
+              <p class="sub-address">Số 600 Nguyễn Văn Cừ nối dài, P. An Bình, Q. Ninh Kiều, TP. Cần Thơ</p>
+              <a href="https://maps.google.com/?q=Đại+học+FPT+Cần+Thơ" target="_blank" class="map-link">
+                <i class="fa-solid fa-diamond-turn-right"></i> Xem chỉ đường trên Google Maps
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
 
     <!-- Footer Section -->
     <footer class="page-footer">
@@ -211,7 +419,7 @@
         <span class="crest-line"></span>
       </div>
       <p class="footer-copy">
-        © 2026 Trần Quốc Việt • Đại học FPT Cần Thơ • Thiết kế thiệp số động chuẩn bị cho GitHub Pages
+        © 2026 Trần Quốc Việt • Đại học FPT Cần Thơ • Kỹ Thuật Phần Mềm • Graduation Invitation & Handheld Console Simulator
       </p>
     </footer>
   </main>
@@ -219,7 +427,7 @@
   <!-- Notification Toast -->
   <div id="toast" class="toast-notification"></div>
 
-  <script src="app.js?v=20261014b"></script>
+  <script src="app.js?v=20261020"></script>
 </body>
 
 </html>
