@@ -1748,9 +1748,8 @@ function updateHUD() {
 }
 
 // ==========================================
-// INVITATION CARD (CANVA BOARDING PASS / TICKET STYLE)
-// Inspires by user reference image: Perforated Ticket, Clean Typography,
-// No oversized logo, Balanced Layout & Tilted Ribbon Tag for Host
+// INVITATION CARD (ROYAL NAVY & CHAMPAGNE GOLD PRESTIGE CARD)
+// Bespoke, original luxury graduation invitation for Trần Quốc Việt
 // ==========================================
 function renderInvitationCard() {
   const canvas = document.getElementById('invitationCanvas');
@@ -1761,131 +1760,153 @@ function renderInvitationCard() {
   const W = CARD_CONFIG.width;
   const H = CARD_CONFIG.height;
 
-  // 1. Ambient Background Gradient (Gold-to-Blue aura inspired by Canva screenshot)
+  // 1. Imperial Navy Gradient Background
   const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-  bgGrad.addColorStop(0, "#C59B46");
-  bgGrad.addColorStop(0.22, "#917646");
-  bgGrad.addColorStop(0.48, "#2C4C82");
-  bgGrad.addColorStop(0.78, "#163467");
-  bgGrad.addColorStop(1, "#0A1D42");
+  bgGrad.addColorStop(0, "#061024");
+  bgGrad.addColorStop(0.25, "#0A1B3B");
+  bgGrad.addColorStop(0.55, "#0F254E");
+  bgGrad.addColorStop(0.85, "#0B1D3D");
+  bgGrad.addColorStop(1, "#050E20");
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, W, H);
 
-  // Soft background particle dust
+  // Warm central golden illumination glow
+  const radialGlow = ctx.createRadialGradient(W / 2, 580, 50, W / 2, 580, 520);
+  radialGlow.addColorStop(0, "rgba(212, 175, 55, 0.22)");
+  radialGlow.addColorStop(0.45, "rgba(22, 42, 82, 0.18)");
+  radialGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = radialGlow;
+  ctx.fillRect(0, 0, W, H);
+
+  // Ambient Star Dust
   drawCardCanvasParticles(ctx);
 
-  // Ticket Dimensions & Placement
-  const ticketW = 600;
-  const ticketX = (W - ticketW) / 2; // 200
-  const ticketY = 105;
-  const ticketH = 1325;
+  // 2. Ornate Double Gold Borders with Filigree Corners
+  drawCardLuxuryBorders(ctx, W, H);
 
-  // 2. Ticket Paper Drop Shadow & Body
-  ctx.save();
-  ctx.shadowColor = "rgba(0, 0, 0, 0.45)";
-  ctx.shadowBlur = 32;
-  ctx.shadowOffsetY = 16;
+  // 3. Top Academic Laurel Crest
+  drawAcademicLaurelCrest(ctx, W / 2, 120);
 
-  // Cardstock surface
-  const paperGrad = ctx.createLinearGradient(ticketX, ticketY, ticketX, ticketY + ticketH);
-  paperGrad.addColorStop(0, "#FFFFFF");
-  paperGrad.addColorStop(0.85, "#FAFCFF");
-  paperGrad.addColorStop(1, "#F3F7FC");
-  ctx.fillStyle = paperGrad;
-  ctx.fillRect(ticketX, ticketY, ticketW, ticketH);
-  ctx.restore();
-
-  // Subtle border around ticket
-  ctx.save();
-  ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
-  ctx.lineWidth = 1;
-  ctx.strokeRect(ticketX, ticketY, ticketW, ticketH);
-  ctx.restore();
-
-  // 3. Ticket Slot / Dispenser Bezel (Top)
-  drawTicketDispenserSlot(ctx, W / 2, 95, 680, 48);
-
-  // 4. Ticket Content (Crisp Navy & Gold Palette)
-  // Section A: "Thân mời"
+  // 4. Formal Invitation Header
   ctx.save();
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.font = "bold 44px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = "#0F2B5C";
-  ctx.fillText("Thân mời", W / 2, 195);
-
-  // Section B: "Bạn: [Guest Name]"
-  const guestName = (appState.user && appState.user.name) ? appState.user.name : "Quốc Việt";
-  ctx.font = "bold 28px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#0F2B5C";
-  ctx.fillText("Bạn: ", W / 2 - (guestName.length > 18 ? 140 : 110), 265);
-
-  // Recipient Script Name
-  let nameFontSize = 58;
-  if (guestName.length > 25) nameFontSize = 42;
-  else if (guestName.length > 18) nameFontSize = 48;
-  ctx.font = `bold ${nameFontSize}px 'Dancing Script', cursive`;
-  ctx.fillStyle = "#1E3A8A";
-  ctx.fillText(guestName, W / 2 + 30, 265);
-
-  // Section C: Subtitle
-  ctx.font = "500 19px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#475569";
-  ctx.fillText("Đến tham dự và cùng chia sẻ niềm vui", W / 2, 325);
-  ctx.fillText("trong ngày đặc biệt này.", W / 2, 353);
-
-  // Section D: Dotted Divider 1
-  drawDottedLine(ctx, ticketX + 45, 395, ticketX + ticketW - 45, 395, "#1E3A8A", 2.2, 11);
-
-  // Section E: Milestone Date Block (25/10/2026)
-  drawAcademicCompassIcon(ctx, ticketX + 85, 470);
-  drawDiplomaScrollIcon(ctx, ticketX + ticketW - 85, 470);
-
-  ctx.font = "900 62px 'Montserrat', sans-serif";
-  ctx.fillStyle = "#0F2B5C";
-  ctx.fillText("25/10/2026", W / 2, 470);
-
-  // Section F: Ceremony Time & Cap Icon
-  drawTicketMortarboard(ctx, W / 2, 535);
 
   ctx.font = "bold 34px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = "#0F2B5C";
-  ctx.fillText("11:30 - 12:00", W / 2, 580);
+  const headGrad = createGoldGradient(ctx, W / 2 - 140, 200, W / 2 + 140, 200);
+  ctx.fillStyle = headGrad;
+  ctx.shadowColor = "rgba(212, 175, 55, 0.55)";
+  ctx.shadowBlur = 12;
+  ctx.fillText("THƯƠNG MỜI", W / 2, 200);
+  ctx.restore();
 
-  // Section G: Venue & Address
-  ctx.font = "bold 23px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#0F2B5C";
-  ctx.fillText(CARD_CONFIG.venueName, W / 2, 638);
+  drawDiamondFlourish(ctx, W / 2, 230, 140);
 
-  ctx.font = "italic 500 17px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#475569";
-  ctx.fillText("Số 600 Nguyễn Văn Cừ, phường An Bình,", W / 2, 672);
-  ctx.fillText("thành phố Cần Thơ", W / 2, 698);
+  // 5. Guest Recipient Spotlight
+  const guestName = (appState.user && appState.user.name) ? appState.user.name : "Khách Quý";
 
-  ctx.font = "600 18px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#1E3A8A";
-  ctx.fillText("Hotline: 0949 373 770", W / 2, 730);
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
 
-  // Section H: Dotted Divider 2
-  drawDottedLine(ctx, ticketX + 45, 765, ticketX + ticketW - 45, 765, "#1E3A8A", 2.2, 11);
+  ctx.font = "600 20px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#FFE58F";
+  ctx.fillText("THÂN GỬI BẠN", W / 2, 275);
 
-  // Section I: Bold Ceremony Title
-  ctx.font = "900 52px 'Montserrat', 'Playfair Display', sans-serif";
-  ctx.fillStyle = "#0F2B5C";
-  ctx.letterSpacing = "2px";
-  ctx.fillText("LỄ TỐT NGHIỆP", W / 2, 835);
+  // Recipient Script Name
+  let nameFontSize = 66;
+  if (guestName.length > 25) nameFontSize = 46;
+  else if (guestName.length > 18) nameFontSize = 54;
+  ctx.font = `bold ${nameFontSize}px 'Dancing Script', cursive`;
 
-  // Section J: Tilted Luxury Bookmark / Tag (Directly inspired by Canva reference)
-  drawTiltedBookmarkTag(ctx, W / 2, 1010);
+  const nameGrad = ctx.createLinearGradient(W / 2 - 250, 335, W / 2 + 250, 335);
+  nameGrad.addColorStop(0, "#FFF3B3");
+  nameGrad.addColorStop(0.5, "#FFDF73");
+  nameGrad.addColorStop(1, "#E5A93C");
+  ctx.fillStyle = nameGrad;
+  ctx.shadowColor = "rgba(212, 175, 55, 0.7)";
+  ctx.shadowBlur = 18;
+  ctx.fillText(guestName, W / 2, 335);
 
-  // Section K: Warm Invitation Note
-  ctx.font = "bold 27px 'Dancing Script', cursive";
-  ctx.fillStyle = "#1E3A8A";
-  ctx.fillText("Rất hân hạnh được đón tiếp bạn!", W / 2, 1260);
+  ctx.shadowColor = "transparent";
+  ctx.font = "500 18px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#CBD5E1";
+  ctx.fillText("Đến tham dự và cùng chia sẻ khoảnh khắc tốt nghiệp ý nghĩa cùng Quốc Việt", W / 2, 390);
+  ctx.restore();
 
-  // Section L: Perforated Tear Line & Bottom Serrated Edge
-  drawDottedLine(ctx, ticketX + 30, 1370, ticketX + ticketW - 30, 1370, "#64748B", 2, 9);
-  drawPerforatedEdge(ctx, ticketX, ticketY + ticketH, ticketW);
+  // Divider
+  drawCardDivider(ctx, W / 2, 430, 700);
+
+  // 6. Ceremony Title & Host Spotlight
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  ctx.font = "bold 32px 'Playfair Display', Georgia, serif";
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fillText("LỄ TỐT NGHIỆP ĐẠI HỌC", W / 2, 475);
+
+  ctx.font = "600 16px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#FFE58F";
+  ctx.fillText("TÂN KỸ SƯ", W / 2, 518);
+
+  // Host Name: TRẦN QUỐC VIỆT
+  ctx.font = "bold 52px 'Playfair Display', Georgia, serif";
+  const hostGrad = createGoldGradient(ctx, W / 2 - 220, 565, W / 2 + 220, 565);
+  ctx.fillStyle = hostGrad;
+  ctx.shadowColor = "rgba(212, 175, 55, 0.75)";
+  ctx.shadowBlur = 20;
+  ctx.fillText(CARD_CONFIG.hostName, W / 2, 565);
+
+  // Host Badge
+  ctx.shadowColor = "transparent";
+  drawAffiliationPill(ctx, W / 2, 618, "KỸ THUẬT PHẦN MỀM • ĐẠI HỌC FPT CẦN THƠ");
+  ctx.restore();
+
+  // Divider
+  drawCardDivider(ctx, W / 2, 670, 700);
+
+  // 7. Event Information Showcase Glass Cards
+  // Box 1: Thời gian buổi lễ
+  drawEventInfoCard(ctx, 120, 710, 760, 190, {
+    icon: "calendar",
+    tag: "THỜI GIAN TỔ CHỨC",
+    mainText: "CHỦ NHẬT, NGÀY 25 THÁNG 10 NĂM 2026",
+    timeText: "11:30 — 12:00 TRƯA",
+    subNote: "Vui lòng có mặt đúng giờ để cùng chụp ảnh kỷ niệm"
+  });
+
+  // Box 2: Địa điểm tổ chức
+  drawEventInfoCard(ctx, 120, 930, 760, 205, {
+    icon: "location",
+    tag: "ĐỊA ĐIỂM TỔ CHỨC",
+    mainText: "SÂN VẬN ĐỘNG TRƯỜNG ĐẠI HỌC FPT CẦN THƠ",
+    addressLine1: "Số 600, Đường Nguyễn Văn Cừ nối dài, P. An Bình,",
+    addressLine2: "Quận Ninh Kiều, TP. Cần Thơ",
+    phoneText: "Hotline liên hệ: 0949 373 770"
+  });
+
+  // Divider
+  drawCardDivider(ctx, W / 2, 1175, 700);
+
+  // 8. Warm Signature Closing
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  ctx.font = "bold 32px 'Dancing Script', cursive";
+  ctx.fillStyle = "#FFE58F";
+  ctx.shadowColor = "rgba(212, 175, 55, 0.5)";
+  ctx.shadowBlur = 10;
+  ctx.fillText("Sự hiện diện của bạn là niềm vinh hạnh lớn đối với Quốc Việt!", W / 2, 1240);
+
+  ctx.shadowColor = "transparent";
+  ctx.font = "500 18px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#94A3B8";
+  ctx.fillText("Rất mong được đón tiếp và chụp những bức hình kỷ niệm cùng bạn!", W / 2, 1285);
+
+  // 9. Bottom Crest & Seal
+  drawBottomAcademicSeal(ctx, W / 2, 1370);
 
   ctx.restore();
 
@@ -1905,304 +1926,288 @@ function drawCardCanvasParticles(ctx) {
 }
 
 /**
- * Top Metallic Dispenser Slot Capsule
+ * Double Luxury Gold Borders with Filigree Corners
  */
-function drawTicketDispenserSlot(ctx, cx, cy, w, h) {
+function drawCardLuxuryBorders(ctx, W, H) {
+  const outerPad = 42;
+  const innerPad = 56;
+
+  // Outer gold gradient border
+  const outerGrad = createGoldGradient(ctx, outerPad, outerPad, W - outerPad, H - outerPad);
   ctx.save();
-  const x = cx - w / 2;
-  const y = cy - h / 2;
-  const r = h / 2;
+  ctx.strokeStyle = outerGrad;
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(outerPad, outerPad, W - outerPad * 2, H - outerPad * 2);
 
-  // Outer Bezel Shadow
-  ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
-  ctx.shadowBlur = 18;
-  ctx.shadowOffsetY = 8;
+  // Inner hairline border
+  ctx.strokeStyle = "rgba(212, 175, 55, 0.45)";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(innerPad, innerPad, W - innerPad * 2, H - innerPad * 2);
 
-  // Metallic Chrome Bezel
-  const bezelGrad = ctx.createLinearGradient(x, y, x, y + h);
-  bezelGrad.addColorStop(0, "#F8FAFC");
-  bezelGrad.addColorStop(0.35, "#CBD5E1");
-  bezelGrad.addColorStop(0.7, "#94A3B8");
-  bezelGrad.addColorStop(1, "#E2E8F0");
-  ctx.fillStyle = bezelGrad;
-  ctx.beginPath();
-  ctx.roundRect(x, y, w, h, r);
-  ctx.fill();
+  // 4 Corner flourishes
+  const cSize = 44;
+  drawFiligreeCorner(ctx, innerPad, innerPad, 1, 1, cSize);
+  drawFiligreeCorner(ctx, W - innerPad, innerPad, -1, 1, cSize);
+  drawFiligreeCorner(ctx, innerPad, H - innerPad, 1, -1, cSize);
+  drawFiligreeCorner(ctx, W - innerPad, H - innerPad, -1, -1, cSize);
 
-  // Inner Slot Slit
-  ctx.shadowColor = "transparent";
-  const slotW = w - 60;
-  const slotH = 16;
-  const slotX = cx - slotW / 2;
-  const slotY = cy - slotH / 2;
-  ctx.fillStyle = "#0F172A";
-  ctx.beginPath();
-  ctx.roundRect(slotX, slotY, slotW, slotH, slotH / 2);
-  ctx.fill();
+  // Border center diamond accents
+  drawDiamond(ctx, W / 2, innerPad, 5, "#FFE58F");
+  drawDiamond(ctx, W / 2, H - innerPad, 5, "#FFE58F");
+  drawDiamond(ctx, innerPad, H / 2, 5, "#FFE58F");
+  drawDiamond(ctx, W - innerPad, H / 2, 5, "#FFE58F");
 
   ctx.restore();
 }
 
-/**
- * Dotted Separator Line
- */
-function drawDottedLine(ctx, x1, y1, x2, y2, color, dotRadius = 2.2, gap = 11) {
+function drawFiligreeCorner(ctx, x, y, dx, dy, size) {
+  ctx.save();
+  ctx.strokeStyle = "#FFE58F";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(x + dx * size, y);
+  ctx.lineTo(x + dx * 14, y);
+  ctx.lineTo(x + dx * 14, y + dy * 14);
+  ctx.lineTo(x, y + dy * 14);
+  ctx.lineTo(x, y + dy * size);
+  ctx.stroke();
+
+  drawDiamond(ctx, x + dx * 20, y + dy * 20, 4, "#D4AF37");
+  ctx.restore();
+}
+
+function drawDiamond(ctx, cx, cy, size, color) {
   ctx.save();
   ctx.fillStyle = color;
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const dist = Math.sqrt(dx * dx + dy * dy);
-  const count = Math.floor(dist / gap);
-
-  for (let i = 0; i <= count; i++) {
-    const t = i / count;
-    const px = x1 + dx * t;
-    const py = y1 + dy * t;
-    ctx.beginPath();
-    ctx.arc(px, py, dotRadius, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.restore();
-}
-
-/**
- * Academic Compass / Seal Emblem Icon
- */
-function drawAcademicCompassIcon(ctx, cx, cy) {
-  ctx.save();
-  ctx.strokeStyle = "#1E3A8A";
-  ctx.lineWidth = 1.8;
-
-  // Outer ring
   ctx.beginPath();
-  ctx.arc(cx, cy, 22, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Inner ring
-  ctx.beginPath();
-  ctx.arc(cx, cy, 16, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // 8-point compass star
-  ctx.fillStyle = "#1E3A8A";
-  for (let i = 0; i < 4; i++) {
-    const angle = (i * Math.PI) / 2;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + Math.cos(angle - 0.2) * 5, cy + Math.sin(angle - 0.2) * 5);
-    ctx.lineTo(cx + Math.cos(angle) * 14, cy + Math.sin(angle) * 14);
-    ctx.lineTo(cx + Math.cos(angle + 0.2) * 5, cy + Math.sin(angle + 0.2) * 5);
-    ctx.closePath();
-    ctx.fill();
-  }
-  ctx.restore();
-}
-
-/**
- * Rolled Diploma Scroll Icon
- */
-function drawDiplomaScrollIcon(ctx, cx, cy) {
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(-0.25);
-
-  ctx.strokeStyle = "#1E3A8A";
-  ctx.lineWidth = 1.8;
-  ctx.fillStyle = "#FFFFFF";
-
-  // Cylinder body
-  ctx.fillRect(-22, -9, 44, 18);
-  ctx.strokeRect(-22, -9, 44, 18);
-
-  // Rolled ends
-  ctx.beginPath();
-  ctx.ellipse(-22, 0, 4, 9, 0, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.ellipse(22, 0, 4, 9, 0, 0, Math.PI * 2);
+  ctx.moveTo(cx, cy - size);
+  ctx.lineTo(cx + size, cy);
+  ctx.lineTo(cx, cy + size);
+  ctx.lineTo(cx - size, cy);
+  ctx.closePath();
   ctx.fill();
-  ctx.stroke();
-
-  // Red/Gold tie ribbon
-  ctx.fillStyle = "#DC2626";
-  ctx.fillRect(-4, -9.5, 8, 19);
-  ctx.fillStyle = "#D4AF37";
-  ctx.fillRect(-1.5, -9.5, 3, 19);
-
   ctx.restore();
 }
 
 /**
- * Mortarboard Cap Icon above time
+ * Top Academic Laurel Crest
  */
-function drawTicketMortarboard(ctx, cx, cy) {
+function drawAcademicLaurelCrest(ctx, cx, cy) {
   ctx.save();
-  ctx.fillStyle = "#1E3A8A";
-  ctx.strokeStyle = "#1E3A8A";
+
+  // Gold outer wreath ring
+  ctx.strokeStyle = "rgba(212, 175, 55, 0.4)";
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 38, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Mortarboard Icon in center
+  ctx.fillStyle = "#FFE58F";
+  ctx.strokeStyle = "#FFE58F";
   ctx.lineWidth = 1.5;
 
-  // Cap diamond top
   ctx.beginPath();
   ctx.moveTo(cx, cy - 14);
-  ctx.lineTo(cx + 28, cy - 4);
-  ctx.lineTo(cx, cy + 6);
-  ctx.lineTo(cx - 28, cy - 4);
+  ctx.lineTo(cx + 24, cy - 5);
+  ctx.lineTo(cx, cy + 4);
+  ctx.lineTo(cx - 24, cy - 5);
   ctx.closePath();
   ctx.fill();
 
-  // Cap skull base
   ctx.beginPath();
-  ctx.moveTo(cx - 15, cy + 2);
-  ctx.lineTo(cx - 15, cy + 11);
-  ctx.bezierCurveTo(cx - 15, cy + 16, cx + 15, cy + 16, cx + 15, cy + 11);
-  ctx.lineTo(cx + 15, cy + 2);
+  ctx.moveTo(cx - 13, cy);
+  ctx.lineTo(cx - 13, cy + 9);
+  ctx.bezierCurveTo(cx - 13, cy + 14, cx + 13, cy + 14, cx + 13, cy + 9);
+  ctx.lineTo(cx + 13, cy);
   ctx.closePath();
   ctx.fill();
 
-  // Golden Tassel
-  ctx.strokeStyle = "#D4AF37";
-  ctx.lineWidth = 2;
+  // Tassel
+  ctx.strokeStyle = "#FFDF73";
+  ctx.lineWidth = 1.8;
   ctx.beginPath();
-  ctx.moveTo(cx, cy - 4);
-  ctx.lineTo(cx + 22, cy + 4);
-  ctx.lineTo(cx + 22, cy + 16);
+  ctx.moveTo(cx, cy - 5);
+  ctx.lineTo(cx + 19, cy + 2);
+  ctx.lineTo(cx + 19, cy + 14);
   ctx.stroke();
 
-  ctx.fillStyle = "#D4AF37";
-  ctx.fillRect(cx + 20, cy + 16, 4, 4);
-
-  ctx.restore();
-}
-
-/**
- * Tilted Luxury Bookmark / Tag (Directly inspired by Canva reference image)
- */
-function drawTiltedBookmarkTag(ctx, cx, cy) {
-  ctx.save();
-
-  // 1. Lower Amber-Gold Ribbon Banner (tilted at -3 deg)
-  ctx.save();
-  ctx.translate(cx + 10, cy + 42);
-  ctx.rotate(-0.05);
-
-  const bannerW = 340;
-  const bannerH = 46;
-  const bx = -bannerW / 2;
-  const by = -bannerH / 2;
-
-  ctx.shadowColor = "rgba(0, 0, 0, 0.22)";
-  ctx.shadowBlur = 12;
-  ctx.shadowOffsetY = 6;
-
-  // Gold gradient fill
-  const bannerGrad = ctx.createLinearGradient(bx, by, bx + bannerW, by);
-  bannerGrad.addColorStop(0, "#E5B944");
-  bannerGrad.addColorStop(0.5, "#FCD34D");
-  bannerGrad.addColorStop(1, "#D4AF37");
-  ctx.fillStyle = bannerGrad;
-  ctx.beginPath();
-  ctx.roundRect(bx, by, bannerW, bannerH, 6);
-  ctx.fill();
-
-  ctx.shadowColor = "transparent";
-  ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#0F2B5C";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("Kỹ Thuật Phần Mềm • ĐH FPT Cần Thơ", 0, 0);
-  ctx.restore();
-
-  // 2. Main Sapphire Blue Bookmark Tag (tilted at -9 deg)
-  ctx.save();
-  ctx.translate(cx - 15, cy - 10);
-  ctx.rotate(-0.16);
-
-  const tagW = 320;
-  const tagH = 90;
-  const tx = -tagW / 2;
-  const ty = -tagH / 2;
-
-  // Drop shadow
-  ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
-  ctx.shadowBlur = 16;
-  ctx.shadowOffsetY = 8;
-
-  // Sapphire Royal Blue Gradient
-  const tagGrad = ctx.createLinearGradient(tx, ty, tx + tagW, ty + tagH);
-  tagGrad.addColorStop(0, "#163472");
-  tagGrad.addColorStop(0.5, "#0F2B5C");
-  tagGrad.addColorStop(1, "#0A1D42");
-  ctx.fillStyle = tagGrad;
-  ctx.beginPath();
-  ctx.roundRect(tx, ty, tagW, tagH, 8);
-  ctx.fill();
-
-  // Subtle inner border
-  ctx.shadowColor = "transparent";
-  ctx.strokeStyle = "rgba(255, 229, 143, 0.4)";
-  ctx.lineWidth = 1;
-  ctx.strokeRect(tx + 4, ty + 4, tagW - 8, tagH - 8);
-
-  // Left Hole with Golden Ring & Hanging Ribbon Thread
-  const holeX = tx + 20;
-  const holeY = 0;
-  ctx.fillStyle = "#FFFFFF";
-  ctx.beginPath();
-  ctx.arc(holeX, holeY, 6, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.strokeStyle = "#D4AF37";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(holeX, holeY, 7, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Golden loop thread extending to the left
-  ctx.strokeStyle = "#FFE58F";
-  ctx.lineWidth = 1.6;
-  ctx.beginPath();
-  ctx.moveTo(holeX, holeY);
-  ctx.bezierCurveTo(holeX - 45, holeY - 15, holeX - 65, holeY + 25, holeX - 85, holeY + 10);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(holeX, holeY);
-  ctx.bezierCurveTo(holeX - 40, holeY - 25, holeX - 70, holeY + 10, holeX - 95, holeY + 20);
-  ctx.stroke();
-
-  // Host Name inside Tag
-  ctx.font = "bold 46px 'Dancing Script', cursive";
+  // Year 2026 below cap
+  ctx.font = "bold 13px 'Be Vietnam Pro', sans-serif";
   ctx.fillStyle = "#FFE58F";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
-  ctx.shadowBlur = 6;
-  ctx.fillText("Trần Quốc Việt", 10, 0);
+  ctx.fillText("2022 — 2026", cx, cy + 26);
 
-  ctx.restore();
   ctx.restore();
 }
 
 /**
- * Perforated Serrated Cuts at Bottom Edge
+ * Ornate Divider with Diamond Center
  */
-function drawPerforatedEdge(ctx, x, y, width) {
+function drawCardDivider(ctx, cx, cy, width) {
   ctx.save();
-  ctx.fillStyle = "#0A1D42"; // Matches ambient background at bottom
+  const half = width / 2;
+  const grad = ctx.createLinearGradient(cx - half, cy, cx + half, cy);
+  grad.addColorStop(0, "rgba(212, 175, 55, 0)");
+  grad.addColorStop(0.5, "rgba(255, 229, 143, 0.85)");
+  grad.addColorStop(1, "rgba(212, 175, 55, 0)");
 
-  const toothWidth = 20;
-  const toothHeight = 12;
-  const count = Math.ceil(width / toothWidth);
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx - half, cy);
+  ctx.lineTo(cx + half, cy);
+  ctx.stroke();
 
-  for (let i = 0; i < count; i++) {
-    const tx = x + i * toothWidth;
-    ctx.beginPath();
-    ctx.moveTo(tx, y);
-    ctx.lineTo(tx + toothWidth / 2, y - toothHeight);
-    ctx.lineTo(tx + toothWidth, y);
-    ctx.closePath();
-    ctx.fill();
+  drawDiamond(ctx, cx, cy, 5, "#FFE58F");
+  drawDiamond(ctx, cx - 40, cy, 3, "rgba(212, 175, 55, 0.7)");
+  drawDiamond(ctx, cx + 40, cy, 3, "rgba(212, 175, 55, 0.7)");
+  ctx.restore();
+}
+
+function drawDiamondFlourish(ctx, cx, cy, width) {
+  ctx.save();
+  const half = width / 2;
+  const grad = ctx.createLinearGradient(cx - half, cy, cx + half, cy);
+  grad.addColorStop(0, "rgba(212, 175, 55, 0)");
+  grad.addColorStop(0.5, "rgba(255, 229, 143, 0.85)");
+  grad.addColorStop(1, "rgba(212, 175, 55, 0)");
+
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(cx - half, cy);
+  ctx.lineTo(cx + half, cy);
+  ctx.stroke();
+
+  drawDiamond(ctx, cx, cy, 4, "#FFE58F");
+  ctx.restore();
+}
+
+/**
+ * Affiliation Badge Capsule
+ */
+function drawAffiliationPill(ctx, cx, cy, text) {
+  ctx.save();
+  ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
+  const metrics = ctx.measureText(text);
+  const pillW = metrics.width + 50;
+  const pillH = 36;
+  const px = cx - pillW / 2;
+  const py = cy - pillH / 2;
+
+  // Glass backing
+  ctx.fillStyle = "rgba(16, 36, 75, 0.75)";
+  ctx.beginPath();
+  ctx.roundRect(px, py, pillW, pillH, pillH / 2);
+  ctx.fill();
+
+  // Gold border
+  ctx.strokeStyle = "rgba(212, 175, 55, 0.55)";
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  ctx.fillStyle = "#FFDF73";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, cx, cy);
+  ctx.restore();
+}
+
+/**
+ * Luxury Event Information Cards
+ */
+function drawEventInfoCard(ctx, x, y, w, h, data) {
+  ctx.save();
+
+  // Glass card backing
+  const cardGrad = ctx.createLinearGradient(x, y, x, y + h);
+  cardGrad.addColorStop(0, "rgba(13, 29, 62, 0.82)");
+  cardGrad.addColorStop(1, "rgba(8, 19, 43, 0.9)");
+  ctx.fillStyle = cardGrad;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, 16);
+  ctx.fill();
+
+  // Gold accent border
+  const borderGrad = createGoldGradient(ctx, x, y, x + w, y + h);
+  ctx.strokeStyle = borderGrad;
+  ctx.lineWidth = 1.8;
+  ctx.stroke();
+
+  // Inner hairline
+  ctx.strokeStyle = "rgba(255, 229, 143, 0.25)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.roundRect(x + 6, y + 6, w - 12, h - 12, 12);
+  ctx.stroke();
+
+  const cx = x + w / 2;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  if (data.icon === "calendar") {
+    // Header Tag
+    ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#D4AF37";
+    ctx.fillText(`🗓️ ${data.tag}`, cx, y + 36);
+
+    // Main Date
+    ctx.font = "bold 24px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#FFE58F";
+    ctx.fillText(data.mainText, cx, y + 78);
+
+    // Time
+    ctx.font = "bold 32px 'Playfair Display', Georgia, serif";
+    ctx.fillStyle = "#FFFFFF";
+    ctx.shadowColor = "rgba(212, 175, 55, 0.5)";
+    ctx.shadowBlur = 10;
+    ctx.fillText(data.timeText, cx, y + 120);
+
+    // Note
+    ctx.shadowColor = "transparent";
+    ctx.font = "500 15px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#94A3B8";
+    ctx.fillText(data.subNote, cx, y + 158);
+  } else if (data.icon === "location") {
+    // Header Tag
+    ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#D4AF37";
+    ctx.fillText(`📍 ${data.tag}`, cx, y + 34);
+
+    // Main Venue
+    ctx.font = "bold 23px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#FFE58F";
+    ctx.fillText(data.mainText, cx, y + 72);
+
+    // Address
+    ctx.font = "500 17px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#E2E8F0";
+    ctx.fillText(data.addressLine1, cx, y + 108);
+    ctx.fillText(data.addressLine2, cx, y + 134);
+
+    // Hotline
+    ctx.font = "bold 19px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#FFDF73";
+    ctx.fillText(data.phoneText, cx, y + 172);
   }
+
+  ctx.restore();
+}
+
+/**
+ * Bottom Academic Seal Watermark
+ */
+function drawBottomAcademicSeal(ctx, cx, cy) {
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#D4AF37";
+  ctx.fillText("★  FPT UNIVERSITY  •  GRADUATION CEREMONY 2026  ★", cx, cy);
+
   ctx.restore();
 }
 
