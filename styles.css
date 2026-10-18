@@ -30,7 +30,7 @@
   --border-gold: rgba(212, 175, 55, 0.3);
   --border-gold-strong: rgba(212, 175, 55, 0.7);
 
-  /* Fonts - 100% Vietnamese Diacritics Support */
+  /* Fonts */
   --font-serif: 'Playfair Display', 'Lora', Georgia, serif;
   --font-script: 'Dancing Script', cursive;
   --font-body: 'Be Vietnam Pro', 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -75,7 +75,7 @@ body {
   position: relative;
 }
 
-/* Background Ambient Orbs & Stars */
+/* Ambient Background Orbs & Stars */
 .glow-orb {
   position: fixed;
   border-radius: 50%;
@@ -86,29 +86,23 @@ body {
 }
 
 .orb-1 {
-  width: 480px;
-  height: 480px;
+  width: 480px; height: 480px;
   background: radial-gradient(circle, rgba(212, 175, 55, 0.35) 0%, rgba(22, 42, 82, 0) 70%);
-  top: -80px;
-  left: 10%;
+  top: -80px; left: 10%;
   animation: floatOrb1 16s ease-in-out infinite alternate;
 }
 
 .orb-2 {
-  width: 520px;
-  height: 520px;
+  width: 520px; height: 520px;
   background: radial-gradient(circle, rgba(37, 99, 235, 0.45) 0%, rgba(11, 27, 61, 0) 70%);
-  bottom: 5%;
-  right: 5%;
+  bottom: 5%; right: 5%;
   animation: floatOrb2 20s ease-in-out infinite alternate;
 }
 
 .orb-3 {
-  width: 440px;
-  height: 440px;
+  width: 440px; height: 440px;
   background: radial-gradient(circle, rgba(212, 175, 55, 0.25) 0%, rgba(11, 27, 61, 0) 70%);
-  top: 50%;
-  left: -80px;
+  top: 50%; left: -80px;
   animation: floatOrb3 18s ease-in-out infinite alternate;
 }
 
@@ -317,7 +311,7 @@ body {
 }
 
 /* ========================================================
-   STATE 2: GIẢ LẬP MÁY CHƠI GAME CẦM TAY (HANDHELD CONSOLE)
+   STATE 2: HANDHELD GAME CONSOLE
    ======================================================== */
 .game-section-card {
   display: flex;
@@ -326,7 +320,6 @@ body {
   animation: slideDown 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* User bar */
 .game-user-bar {
   display: flex;
   justify-content: space-between;
@@ -390,15 +383,13 @@ body {
   gap: 10px;
 }
 
-/* ========================================================
-   HANDHELD CONSOLE CASING HARDWARE
-   ======================================================== */
+/* Console Housing */
 .handheld-console {
   background: linear-gradient(180deg, #0e1e3d 0%, #081329 40%, #050e1f 100%);
   border: 3px solid #1a2e54;
   outline: 2px solid var(--gold-primary);
-  border-radius: 24px;
-  padding: 18px;
+  border-radius: 26px;
+  padding: 20px;
   box-shadow: var(--shadow-console);
   position: relative;
   overflow: hidden;
@@ -471,7 +462,7 @@ body {
   font-size: 0.8rem;
 }
 
-/* Console Screen Housing */
+/* Screen Housing */
 .console-screen-housing {
   background: #020713;
   border: 2px solid #142340;
@@ -481,7 +472,6 @@ body {
   position: relative;
 }
 
-/* Screen HUD */
 .screen-hud {
   display: flex;
   justify-content: space-between;
@@ -570,9 +560,7 @@ body {
 
 .progress-sparkle {
   position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  right: 0; top: 0; bottom: 0;
   width: 10px;
   background: #ffffff;
   filter: blur(2px);
@@ -581,8 +569,7 @@ body {
 
 .milestone-tick {
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 0; bottom: 0;
   width: 1px;
   background: rgba(255, 255, 255, 0.35);
   pointer-events: none;
@@ -603,7 +590,7 @@ body {
 .tick-75 { left: 74%; }
 .tick-100 { right: 8px; }
 
-/* Canvas Wrapper */
+/* Canvas */
 .screen-canvas-wrapper {
   position: relative;
   width: 100%;
@@ -698,9 +685,7 @@ body {
   box-shadow: 0 2px 0 #996515;
 }
 
-/* ========================================================
-   COMPACT VICTORY OVERLAY (TỐI ƯU NHỎ GỌN TRÊN MOBILE)
-   ======================================================== */
+/* Compact Victory Overlay */
 .victory-overlay-compact {
   padding: 12px;
   background: rgba(4, 9, 23, 0.82);
@@ -750,102 +735,86 @@ body {
 }
 
 /* ========================================================
-   CONTROLLER DECK (D-PAD & ACTION BUTTONS A/B)
+   CONTROLLER DECK: [ B ] DUCK LEFT • [ A ] JUMP RIGHT
    ======================================================== */
 .console-controls-deck {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 10px 8px;
-  gap: 14px;
+  padding: 24px 20px 10px;
   user-select: none;
   -webkit-user-select: none;
 }
 
-.control-sublabel {
-  display: block;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-  color: var(--text-muted);
-  text-align: center;
-  margin-top: 8px;
-}
-
-/* D-PAD Cross */
-.dpad-container {
+.deck-button-group {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 8px;
 }
 
-.dpad {
-  position: relative;
-  width: 114px;
-  height: 114px;
+.arcade-btn-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 
-.dpad-btn {
-  position: absolute;
-  background: linear-gradient(180deg, #182c4f 0%, #0d1a33 100%);
-  border: 2px solid #2a477d;
+.arcade-btn-name {
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
   color: var(--gold-light);
+}
+
+.arcade-btn-hint {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* Giant Tactile Arcade Buttons */
+.arcade-round-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  font-weight: 900;
+  font-size: 1.5rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
   transition: all 0.1s ease;
   touch-action: manipulation;
 }
 
-.dpad-btn:active,
-.dpad-btn.pressed {
-  background: linear-gradient(180deg, #244173 0%, #172d54 100%);
-  border-color: var(--gold-primary);
-  color: #ffffff;
-  transform: scale(0.96);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 10px var(--gold-glow);
+/* Button B (DUCK - Left) */
+.btn-b {
+  background: linear-gradient(135deg, #1f3d73 0%, #0d1e3d 100%);
+  color: var(--gold-light);
+  border: 3.5px solid var(--gold-primary);
+  box-shadow: 0 8px 0 #071020, 0 10px 20px rgba(0, 0, 0, 0.6);
 }
 
-.dpad-up {
-  top: 0; left: 38px;
-  width: 38px; height: 40px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  border-bottom: none;
+.btn-b:active,
+.btn-b.pressed {
+  transform: translateY(5px);
+  box-shadow: 0 3px 0 #071020, 0 0 18px rgba(212, 175, 55, 0.85);
+  background: linear-gradient(135deg, #2b549e 0%, #163266 100%);
 }
 
-.dpad-down {
-  bottom: 0; left: 38px;
-  width: 38px; height: 40px;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  border-top: none;
+/* Button A (JUMP - Right) */
+.btn-a {
+  background: var(--gold-gradient);
+  color: #071126;
+  border: 3.5px solid #FFE79A;
+  box-shadow: 0 8px 0 #8c5b10, 0 10px 20px rgba(0, 0, 0, 0.6);
 }
 
-.dpad-left {
-  top: 38px; left: 0;
-  width: 40px; height: 38px;
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-  border-right: none;
-}
-
-.dpad-right {
-  top: 38px; right: 0;
-  width: 40px; height: 38px;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  border-left: none;
-}
-
-.dpad-center {
-  position: absolute;
-  top: 38px; left: 38px;
-  width: 38px; height: 38px;
-  background: #102140;
+.btn-a:active,
+.btn-a.pressed {
+  transform: translateY(5px);
+  box-shadow: 0 3px 0 #8c5b10, 0 0 20px rgba(255, 223, 115, 0.95);
 }
 
 /* Center Controls (Speaker Grill & Select/Start) */
@@ -853,7 +822,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .speaker-grill {
@@ -883,13 +852,13 @@ body {
 }
 
 .pill-btn {
-  width: 44px;
-  height: 18px;
+  width: 46px;
+  height: 20px;
   background: #1a2c4e;
   border: 1px solid #334d7d;
   border-radius: var(--radius-full);
   color: var(--gold-light);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -912,88 +881,16 @@ body {
   color: var(--text-muted);
 }
 
-/* Action Buttons Pair (Button A & Button B) */
-.action-buttons-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.action-buttons-pair {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  transform: rotate(-18deg);
-}
-
-.arcade-btn-cluster {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  transform: rotate(18deg);
-}
-
-.arcade-round-btn {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  border: none;
-  font-weight: 900;
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.1s ease;
-  touch-action: manipulation;
-}
-
-/* Button A (NHẢY - Gold) */
-.btn-a {
-  background: var(--gold-gradient);
-  color: #071126;
-  border: 3px solid #FFE79A;
-  box-shadow: 0 6px 0 #8c5b10, 0 8px 16px rgba(0, 0, 0, 0.6);
-}
-
-.btn-a:active,
-.btn-a.pressed {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #8c5b10, 0 0 15px rgba(255, 223, 115, 0.8);
-}
-
-/* Button B (CÚI - Dark Blue) */
-.btn-b {
-  background: linear-gradient(135deg, #1e3a6d 0%, #0d1e3d 100%);
-  color: var(--gold-light);
-  border: 3px solid var(--gold-primary);
-  box-shadow: 0 6px 0 #071020, 0 8px 16px rgba(0, 0, 0, 0.6);
-}
-
-.btn-b:active,
-.btn-b.pressed {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #071020, 0 0 15px rgba(212, 175, 55, 0.8);
-}
-
-.arcade-btn-label {
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  color: var(--gold-light);
-}
-
 /* Console Item & Obstacle Guide */
 .console-item-guide {
   margin-top: 16px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   background: rgba(4, 9, 23, 0.65);
   border: 1px solid rgba(212, 175, 55, 0.2);
   border-radius: var(--radius-md);
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 8px 14px;
+  gap: 8px 16px;
   font-size: 0.78rem;
 }
 
@@ -1487,38 +1384,17 @@ body {
   }
 
   .console-controls-deck {
-    padding: 16px 4px 6px;
-    gap: 8px;
-  }
-
-  .dpad {
-    width: 96px;
-    height: 96px;
-  }
-
-  .dpad-up, .dpad-down {
-    left: 32px;
-    width: 32px; height: 33px;
-  }
-
-  .dpad-left, .dpad-right {
-    top: 32px;
-    width: 33px; height: 32px;
-  }
-
-  .dpad-center {
-    top: 32px; left: 32px;
-    width: 32px; height: 32px;
+    padding: 16px 10px 6px;
   }
 
   .arcade-round-btn {
-    width: 48px;
-    height: 48px;
-    font-size: 1.05rem;
+    width: 60px;
+    height: 60px;
+    font-size: 1.3rem;
   }
 
-  .action-buttons-pair {
-    gap: 10px;
+  .arcade-btn-name {
+    font-size: 0.8rem;
   }
 
   .speaker-grill {
@@ -1526,12 +1402,12 @@ body {
   }
 
   .pill-buttons-row {
-    gap: 10px;
+    gap: 8px;
   }
 
   .pill-btn {
     width: 38px;
-    height: 16px;
+    height: 18px;
     font-size: 0.68rem;
   }
 

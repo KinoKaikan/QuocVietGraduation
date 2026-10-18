@@ -532,22 +532,32 @@ function initGameCanvas() {
 }
 
 function bindConsoleButtons() {
-  // 1. Button A (NHẢY)
+  // 1. Button A (RIGHT: JUMP / START / RETRY)
   const btnA = document.getElementById('btnActionA');
   if (btnA) {
     const pressA = (e) => {
       e.preventDefault();
       btnA.classList.add('pressed');
-      triggerPlayerJump();
+      if (!gameState.isPlaying || gameState.isGameOver) {
+        startGame();
+      } else {
+        triggerPlayerJump();
+      }
     };
-    const releaseA = () => btnA.classList.remove('pressed');
+    const releaseA = (e) => {
+      if (e) e.preventDefault();
+      btnA.classList.remove('pressed');
+    };
+
     btnA.addEventListener('mousedown', pressA);
     btnA.addEventListener('mouseup', releaseA);
+    btnA.addEventListener('mouseleave', releaseA);
     btnA.addEventListener('touchstart', pressA, { passive: false });
-    btnA.addEventListener('touchend', releaseA);
+    btnA.addEventListener('touchend', releaseA, { passive: false });
+    btnA.addEventListener('touchcancel', releaseA, { passive: false });
   }
 
-  // 2. Button B (CÚI NGƯỜI)
+  // 2. Button B (LEFT: DUCK / CROUCH)
   const btnB = document.getElementById('btnActionB');
   if (btnB) {
     const pressB = (e) => {
@@ -555,50 +565,21 @@ function bindConsoleButtons() {
       btnB.classList.add('pressed');
       setPlayerDucking(true);
     };
-    const releaseB = () => {
+    const releaseB = (e) => {
+      if (e) e.preventDefault();
       btnB.classList.remove('pressed');
       setPlayerDucking(false);
     };
+
     btnB.addEventListener('mousedown', pressB);
     btnB.addEventListener('mouseup', releaseB);
+    btnB.addEventListener('mouseleave', releaseB);
     btnB.addEventListener('touchstart', pressB, { passive: false });
-    btnB.addEventListener('touchend', releaseB);
+    btnB.addEventListener('touchend', releaseB, { passive: false });
+    btnB.addEventListener('touchcancel', releaseB, { passive: false });
   }
 
-  // 3. D-Pad UP (Nhảy)
-  const dpadUp = document.getElementById('btnDpadUp');
-  if (dpadUp) {
-    const pressUp = (e) => {
-      e.preventDefault();
-      dpadUp.classList.add('pressed');
-      triggerPlayerJump();
-    };
-    const releaseUp = () => dpadUp.classList.remove('pressed');
-    dpadUp.addEventListener('mousedown', pressUp);
-    dpadUp.addEventListener('mouseup', releaseUp);
-    dpadUp.addEventListener('touchstart', pressUp, { passive: false });
-    dpadUp.addEventListener('touchend', releaseUp);
-  }
-
-  // 4. D-Pad DOWN (Cúi người)
-  const dpadDown = document.getElementById('btnDpadDown');
-  if (dpadDown) {
-    const pressDown = (e) => {
-      e.preventDefault();
-      dpadDown.classList.add('pressed');
-      setPlayerDucking(true);
-    };
-    const releaseDown = () => {
-      dpadDown.classList.remove('pressed');
-      setPlayerDucking(false);
-    };
-    dpadDown.addEventListener('mousedown', pressDown);
-    dpadDown.addEventListener('mouseup', releaseDown);
-    dpadDown.addEventListener('touchstart', pressDown, { passive: false });
-    dpadDown.addEventListener('touchend', releaseDown);
-  }
-
-  // 5. Select (Sound) & Start (Pause)
+  // 3. Audio & Pause
   const btnSound = document.getElementById('btnSoundSelect');
   if (btnSound) btnSound.addEventListener('click', toggleSound);
 
@@ -608,17 +589,17 @@ function bindConsoleButtons() {
 
 function handleGlobalKeyDown(e) {
   if (!gameState.isPlaying || gameState.isPaused) {
-    if (e.code === 'Space' && !gameState.isPlaying) {
+    if ((e.code === 'Space' || e.code === 'KeyA' || e.code === 'Enter') && !gameState.isPlaying) {
       e.preventDefault();
       startGame();
     }
     return;
   }
 
-  if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+  if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW' || e.code === 'KeyA') {
     e.preventDefault();
     triggerPlayerJump();
-  } else if (e.code === 'ArrowDown' || e.code === 'KeyS' || e.code === 'KeyC') {
+  } else if (e.code === 'ArrowDown' || e.code === 'KeyS' || e.code === 'KeyB' || e.code === 'KeyC') {
     e.preventDefault();
     setPlayerDucking(true);
   } else if (e.code === 'KeyP') {
@@ -627,7 +608,7 @@ function handleGlobalKeyDown(e) {
 }
 
 function handleGlobalKeyUp(e) {
-  if (e.code === 'ArrowDown' || e.code === 'KeyS' || e.code === 'KeyC') {
+  if (e.code === 'ArrowDown' || e.code === 'KeyS' || e.code === 'KeyB' || e.code === 'KeyC') {
     setPlayerDucking(false);
   }
 }
@@ -906,25 +887,35 @@ function updateSpawners() {
 }
 
 // ==========================================
-// OBSTACLES & DUCKABLE AIR HAZARDS
+// OBSTACLES & DUCKABLE AIR HAZARDS (ENGLISH)
 // ==========================================
+let lastSpawnWasAir = false;
+
 function spawnObstacle() {
-  const types = [
-    { type: 'deadline', name: 'Deadline', width: 38, height: 42, color: '#ef4444', tag: 'DEADLINE' },
-    { type: 'doan', name: 'Đồ án', width: 44, height: 46, color: '#3b82f6', tag: 'ĐỒ ÁN' },
-    { type: 'thilai', name: 'Thi lại', width: 40, height: 44, color: '#eab308', tag: 'THI LẠI' },
-    { type: 'baocao', name: 'Báo cáo', width: 42, height: 46, color: '#a855f7', tag: 'BÁO CÁO' }
-  ];
+  // Alternate or 50% chance to ensure a balanced mix of jump vs duck
+  const isAir = Math.random() < 0.5 ? !lastSpawnWasAir : (Math.random() < 0.5);
+  lastSpawnWasAir = isAir;
 
-  const choice = types[Math.floor(Math.random() * types.length)];
-  const isAir = Math.random() < 0.35;
-
+  let choice;
   let yPos;
+
   if (isAir) {
-    // Air obstacle: can duck underneath safely!
-    yPos = gameState.groundY - 58;
+    // Airborne obstacle at head level: MUST DUCK [ B ] to slide underneath!
+    const airTypes = [
+      { type: 'retake', name: 'Retake', tag: 'RETAKE', width: 44, height: 24, color: '#eab308' },
+      { type: 'deadline', name: 'Deadline', tag: 'DEADLINE', width: 44, height: 24, color: '#ef4444' }
+    ];
+    choice = airTypes[Math.floor(Math.random() * airTypes.length)];
+    // Standing player head occupies y in [256, 282]. Ducking player is [286, 320].
+    // Airborne obstacle sits at y = 258..282, colliding with standing head, clear under duck!
+    yPos = gameState.groundY - 62;
   } else {
-    // Ground obstacle: must jump over!
+    // Ground obstacle: MUST JUMP [ A ] over it!
+    const groundTypes = [
+      { type: 'thesis', name: 'Thesis', tag: 'THESIS', width: 44, height: 44, color: '#3b82f6' },
+      { type: 'report', name: 'Report', tag: 'REPORT', width: 42, height: 44, color: '#a855f7' }
+    ];
+    choice = groundTypes[Math.floor(Math.random() * groundTypes.length)];
     yPos = gameState.groundY - choice.height;
   }
 
@@ -941,13 +932,13 @@ function spawnItem() {
 
   let choice;
   if (needsHeart) {
-    choice = { type: 'trai_tim', name: 'Trái tim', points: 50, width: 32, height: 32, color: '#ef4444' };
+    choice = { type: 'heart', name: 'Heart', points: 50, width: 32, height: 32, color: '#ef4444' };
   } else {
     const types = [
-      { type: 'diem_a', name: 'Điểm A', points: 100, width: 32, height: 32, color: '#D4AF37' },
-      { type: 'bang_khen', name: 'Bằng khen', points: 150, width: 36, height: 34, color: '#fb923c' },
-      { type: 'ca_phe', name: 'Cà phê', points: 50, width: 28, height: 32, color: '#d97706' },
-      { type: 'trai_tim', name: 'Trái tim', points: 50, width: 32, height: 32, color: '#ef4444' }
+      { type: 'grade_a', name: 'Grade A', points: 100, width: 32, height: 32, color: '#D4AF37' },
+      { type: 'diploma', name: 'Diploma', points: 150, width: 36, height: 34, color: '#fb923c' },
+      { type: 'coffee', name: 'Coffee', points: 50, width: 28, height: 32, color: '#d97706' },
+      { type: 'heart', name: 'Heart', points: 50, width: 32, height: 32, color: '#ef4444' }
     ];
     choice = types[Math.floor(Math.random() * types.length)];
   }
@@ -968,9 +959,9 @@ function spawnItem() {
 }
 
 function checkCollision(p, box) {
-  const pPadX = 10;
-  const pPadY = 6;
-  const bPad = 5;
+  const pPadX = 8;
+  const pPadY = 4;
+  const bPad = 4;
 
   return (
     p.x + pPadX < box.x + box.width - bPad &&
@@ -985,7 +976,7 @@ function handleObstacleHit(obs) {
   gameState.invulnerableTimer = 90;
   SoundEffects.playHurt();
   spawnHurtParticles(gameState.player.x + 20, gameState.player.y + 25);
-  addPopupText(gameState.player.x, gameState.player.y - 20, `-1 Mạng! Né ${obs.name}`, '#ef4444');
+  addPopupText(gameState.player.x, gameState.player.y - 20, `-1 LIFE! Hit ${obs.name}`, '#ef4444');
 
   if (gameState.hearts <= 0) {
     triggerGameOver(obs.name);
@@ -995,22 +986,26 @@ function handleObstacleHit(obs) {
 function handleItemCollect(item) {
   gameState.score += item.points;
 
-  if (item.type === 'trai_tim') {
+  if (item.type === 'heart') {
     if (gameState.hearts < 3) {
       gameState.hearts++;
     }
     SoundEffects.playHeal();
     spawnHeartCollectParticles(item.x + 16, item.y + 16);
-    addPopupText(item.x, item.y - 18, `+1 MẠNG HỒI SINH! ❤️`, '#ef4444');
-  } else if (item.type === 'ca_phe') {
+    addPopupText(item.x, item.y - 18, `+1 LIFE RESTORED! ❤️`, '#ef4444');
+  } else if (item.type === 'coffee') {
     gameState.player.coffeeBoostTimer = 180;
     SoundEffects.playCollect(item.points);
     spawnItemCollectParticles(item.x + 16, item.y + 16, item.color);
-    addPopupText(item.x, item.y - 18, `+50 Cà Phê! ⚡ TĂNG TỐC`, '#FFDF73');
+    addPopupText(item.x, item.y - 18, `+50 COFFEE! ⚡ BOOST`, '#FFDF73');
+  } else if (item.type === 'diploma') {
+    SoundEffects.playCollect(item.points);
+    spawnItemCollectParticles(item.x + 16, item.y + 16, item.color);
+    addPopupText(item.x, item.y - 18, `+150 DIPLOMA! 📜`, '#FFDF73');
   } else {
     SoundEffects.playCollect(item.points);
     spawnItemCollectParticles(item.x + 16, item.y + 16, item.color);
-    addPopupText(item.x, item.y - 18, `+${item.points} ${item.name}!`, '#FFDF73');
+    addPopupText(item.x, item.y - 18, `+${item.points} GRADE A! 🌟`, '#FFDF73');
   }
 
   if (gameState.score >= TARGET_MILESTONE_SCORE) {
@@ -1059,7 +1054,7 @@ function triggerGameOver(obstacleName) {
   const overOverlay = document.getElementById('gameOverOverlay');
   const reasonText = document.getElementById('gameOverReason');
   if (reasonText) {
-    reasonText.innerHTML = `Bạn vừa va phải <strong>${obstacleName}</strong> và cạn mạng. Hãy thử lại để chinh phục 2026 điểm nhé!`;
+    reasonText.innerHTML = `You ran out of lives after hitting <strong>${obstacleName}</strong>! Try again to reach 2026 PTS and graduate!`;
   }
   if (overOverlay) overOverlay.style.display = 'flex';
 }
@@ -1266,18 +1261,6 @@ function drawPixelGround(ctx, W, H) {
     ctx.lineTo(drawX + 15, H);
     ctx.stroke();
   }
-
-  // Milestones with Be Vietnam Pro font
-  ctx.fillStyle = '#FFE58F';
-  ctx.font = "bold 11px 'Be Vietnam Pro', sans-serif";
-  ctx.textAlign = 'center';
-  for (let m = 500; m <= 2026; m += 500) {
-    const screenDist = (m * 4) - (gameState.distance * 0.4);
-    if (screenDist > -100 && screenDist < W + 100) {
-      ctx.fillStyle = m === 2026 ? '#FFDF73' : 'rgba(255, 229, 143, 0.75)';
-      ctx.fillText(`📍 ${m === 2026 ? 'TỐT NGHIỆP 2026!' : 'NĂM ' + (m / 500)}`, screenDist, gameState.groundY + 44);
-    }
-  }
   ctx.restore();
 }
 
@@ -1425,83 +1408,111 @@ function drawPixelObstacle(ctx, obs) {
   const ox = Math.floor(obs.x);
   const oy = Math.floor(obs.y);
 
+  if (obs.isAir) {
+    // Air obstacle hovering at head level
+    // Draw subtle ground shadow to show it is floating in the air
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.beginPath();
+    ctx.ellipse(ox + obs.width / 2, gameState.groundY - 2, obs.width * 0.45, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   if (obs.type === 'deadline') {
+    // Airborne urgent deadline alarm clock
     ctx.fillStyle = '#dc2626';
     ctx.beginPath();
-    ctx.arc(ox + 19, oy + 22, 16, 0, Math.PI * 2);
+    ctx.arc(ox + 20, oy + 12, 11, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = '#fee2e2';
     ctx.beginPath();
-    ctx.arc(ox + 19, oy + 22, 12, 0, Math.PI * 2);
+    ctx.arc(ox + 20, oy + 12, 8, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.strokeStyle = '#991b1b';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.8;
     ctx.beginPath();
-    ctx.moveTo(ox + 19, oy + 22);
-    ctx.lineTo(ox + 18, oy + 13);
-    ctx.moveTo(ox + 19, oy + 22);
-    ctx.lineTo(ox + 26, oy + 22);
+    ctx.moveTo(ox + 20, oy + 12);
+    ctx.lineTo(ox + 20, oy + 6);
+    ctx.moveTo(ox + 20, oy + 12);
+    ctx.lineTo(ox + 25, oy + 12);
     ctx.stroke();
 
     ctx.fillStyle = '#f59e0b';
-    ctx.fillRect(ox + 6, oy + 4, 7, 6);
-    ctx.fillRect(ox + 25, oy + 4, 7, 6);
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(ox + 17, oy, 4, 4);
-  } else if (obs.type === 'doan') {
-    ctx.fillStyle = '#1e3a8a';
-    ctx.fillRect(ox + 4, oy + 8, 36, 32);
+    ctx.fillRect(ox + 10, oy, 5, 4);
+    ctx.fillRect(ox + 25, oy, 5, 4);
 
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(ox + 7, oy + 12, 30, 20);
-
-    ctx.fillStyle = '#22c55e';
-    ctx.fillRect(ox + 10, oy + 15, 12, 2);
-    ctx.fillRect(ox + 10, oy + 19, 18, 2);
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(ox + 28, oy + 15, 5, 8);
-
-    ctx.fillStyle = '#334155';
-    ctx.fillRect(ox + 18, oy + 40, 8, 4);
-    ctx.fillRect(ox + 12, oy + 43, 20, 3);
-  } else if (obs.type === 'thilai') {
+    // Speed lines
+    ctx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(ox + obs.width + 2, oy + 8);
+    ctx.lineTo(ox + obs.width + 10, oy + 8);
+    ctx.moveTo(ox + obs.width + 4, oy + 16);
+    ctx.lineTo(ox + obs.width + 12, oy + 16);
+    ctx.stroke();
+  } else if (obs.type === 'retake') {
+    // Airborne course retake exam paper with red 'F' grade
     ctx.fillStyle = '#fef08a';
-    ctx.fillRect(ox + 6, oy + 6, 28, 36);
+    ctx.fillRect(ox + 4, oy + 2, 34, 20);
 
     ctx.fillStyle = '#ca8a04';
-    ctx.fillRect(ox + 9, oy + 10, 16, 2);
-    ctx.fillRect(ox + 9, oy + 14, 22, 2);
-    ctx.fillRect(ox + 9, oy + 18, 18, 2);
+    ctx.fillRect(ox + 8, oy + 6, 14, 2);
+    ctx.fillRect(ox + 8, oy + 10, 18, 2);
+    ctx.fillRect(ox + 8, oy + 14, 12, 2);
 
     ctx.fillStyle = '#dc2626';
-    ctx.font = "bold 22px 'Be Vietnam Pro', sans-serif";
-    ctx.fillText("F", ox + 14, oy + 36);
-  } else if (obs.type === 'baocao') {
+    ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
+    ctx.fillText("F", ox + 22, oy + 17);
+
+    // Floating flutter wings
+    ctx.fillStyle = 'rgba(254, 240, 138, 0.6)';
+    ctx.beginPath();
+    ctx.ellipse(ox + 2, oy + 10, 3, 6, -0.3, 0, Math.PI * 2);
+    ctx.ellipse(ox + 40, oy + 10, 3, 6, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (obs.type === 'thesis') {
+    // Ground thesis laptop
+    ctx.fillStyle = '#1e3a8a';
+    ctx.fillRect(ox + 4, oy + 6, 36, 26);
+
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(ox + 7, oy + 9, 30, 20);
+
+    ctx.fillStyle = '#22c55e';
+    ctx.fillRect(ox + 10, oy + 13, 14, 2);
+    ctx.fillRect(ox + 10, oy + 17, 18, 2);
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(ox + 28, oy + 13, 6, 8);
+
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(ox + 16, oy + 32, 12, 4);
+    ctx.fillRect(ox + 8, oy + 36, 28, 4);
+  } else if (obs.type === 'report') {
+    // Ground report binder stack
     ctx.fillStyle = '#7e22ce';
-    ctx.fillRect(ox + 4, oy + 26, 34, 16);
+    ctx.fillRect(ox + 4, oy + 24, 34, 18);
     ctx.fillStyle = '#9333ea';
-    ctx.fillRect(ox + 8, oy + 16, 30, 12);
+    ctx.fillRect(ox + 8, oy + 14, 30, 12);
     ctx.fillStyle = '#a855f7';
-    ctx.fillRect(ox + 6, oy + 6, 32, 12);
+    ctx.fillRect(ox + 6, oy + 4, 32, 12);
 
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(ox + 30, oy + 4, 6, 4);
-    ctx.fillRect(ox + 10, oy + 14, 6, 4);
+    ctx.fillRect(ox + 28, oy + 6, 6, 4);
+    ctx.fillRect(ox + 10, oy + 16, 6, 4);
   }
 
   // Floating Tag Banner (Be Vietnam Pro)
   ctx.fillStyle = 'rgba(7, 17, 38, 0.9)';
-  ctx.fillRect(ox - 6, oy - 18, obs.width + 12, 15);
+  ctx.fillRect(ox - 8, oy - 18, obs.width + 16, 15);
   ctx.strokeStyle = obs.color;
   ctx.lineWidth = 1;
-  ctx.strokeRect(ox - 6, oy - 18, obs.width + 12, 15);
+  ctx.strokeRect(ox - 8, oy - 18, obs.width + 16, 15);
 
   ctx.fillStyle = obs.color;
   ctx.font = "bold 9px 'Be Vietnam Pro', sans-serif";
   ctx.textAlign = 'center';
-  ctx.fillText(obs.isAir ? `⬇ ${obs.tag}` : obs.tag, ox + obs.width / 2, oy - 7);
+  ctx.fillText(obs.isAir ? `⬇ DUCK: ${obs.tag}` : `⬆ JUMP: ${obs.tag}`, ox + obs.width / 2, oy - 7);
 
   ctx.restore();
 }
@@ -1511,12 +1522,12 @@ function drawPixelItem(ctx, item) {
   const ix = Math.floor(item.x);
   const iy = Math.floor(item.y + (item.floatY || 0));
 
-  ctx.fillStyle = item.type === 'trai_tim' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(255, 223, 115, 0.25)';
+  ctx.fillStyle = item.type === 'heart' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(255, 223, 115, 0.25)';
   ctx.beginPath();
   ctx.arc(ix + item.width / 2, iy + item.height / 2, 20, 0, Math.PI * 2);
   ctx.fill();
 
-  if (item.type === 'trai_tim') {
+  if (item.type === 'heart') {
     ctx.fillStyle = '#ef4444';
     ctx.shadowColor = 'rgba(239, 68, 68, 0.8)';
     ctx.shadowBlur = 8;
@@ -1529,7 +1540,7 @@ function drawPixelItem(ctx, item) {
 
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(cx - 6, cy - 6, 3, 3);
-  } else if (item.type === 'diem_a') {
+  } else if (item.type === 'grade_a') {
     ctx.fillStyle = '#f59e0b';
     ctx.beginPath();
     ctx.arc(ix + 16, iy + 16, 14, 0, Math.PI * 2);
@@ -1544,7 +1555,7 @@ function drawPixelItem(ctx, item) {
     ctx.font = "bold 13px 'Be Vietnam Pro', sans-serif";
     ctx.textAlign = 'center';
     ctx.fillText("A+", ix + 16, iy + 21);
-  } else if (item.type === 'bang_khen') {
+  } else if (item.type === 'diploma') {
     ctx.fillStyle = '#fef3c7';
     ctx.fillRect(ix + 4, iy + 8, 28, 16);
 
@@ -1555,7 +1566,7 @@ function drawPixelItem(ctx, item) {
     ctx.lineTo(ix + 14, iy + 32);
     ctx.lineTo(ix + 24, iy + 26);
     ctx.fill();
-  } else if (item.type === 'ca_phe') {
+  } else if (item.type === 'coffee') {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(ix + 7, iy + 8, 16, 4);
 
@@ -1737,7 +1748,9 @@ function updateHUD() {
 }
 
 // ==========================================
-// INVITATION CARD (OFFICIAL FPT LOGO IN CENTER)
+// INVITATION CARD (CANVA BOARDING PASS / TICKET STYLE)
+// Inspires by user reference image: Perforated Ticket, Clean Typography,
+// No oversized logo, Balanced Layout & Tilted Ribbon Tag for Host
 // ==========================================
 function renderInvitationCard() {
   const canvas = document.getElementById('invitationCanvas');
@@ -1748,50 +1761,133 @@ function renderInvitationCard() {
   const W = CARD_CONFIG.width;
   const H = CARD_CONFIG.height;
 
-  // 1. Background Navy Gradient
+  // 1. Ambient Background Gradient (Gold-to-Blue aura inspired by Canva screenshot)
   const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-  bgGrad.addColorStop(0, "#08142D");
-  bgGrad.addColorStop(0.3, "#0B1B3D");
-  bgGrad.addColorStop(0.7, "#11244C");
-  bgGrad.addColorStop(1, "#071228");
+  bgGrad.addColorStop(0, "#C59B46");
+  bgGrad.addColorStop(0.22, "#917646");
+  bgGrad.addColorStop(0.48, "#2C4C82");
+  bgGrad.addColorStop(0.78, "#163467");
+  bgGrad.addColorStop(1, "#0A1D42");
   ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, W, H);
 
-  // Radial Gold Glow
-  const radialGlow = ctx.createRadialGradient(W / 2, 650, 60, W / 2, 650, 480);
-  radialGlow.addColorStop(0, "rgba(212, 175, 55, 0.18)");
-  radialGlow.addColorStop(0.6, "rgba(22, 42, 82, 0.2)");
-  radialGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
-  ctx.fillStyle = radialGlow;
-  ctx.fillRect(0, 0, W, H);
-
-  // 2. Starry Particles
+  // Soft background particle dust
   drawCardCanvasParticles(ctx);
 
-  // 3. Ornate Double Gold Borders
-  drawCardOrnamentalBorders(ctx, W, H);
+  // Ticket Dimensions & Placement
+  const ticketW = 600;
+  const ticketX = (W - ticketW) / 2; // 200
+  const ticketY = 105;
+  const ticketH = 1325;
 
-  // 4. Top Header: "THÂN MỜI"
-  drawCardTopSection(ctx, W);
+  // 2. Ticket Paper Drop Shadow & Body
+  ctx.save();
+  ctx.shadowColor = "rgba(0, 0, 0, 0.45)";
+  ctx.shadowBlur = 32;
+  ctx.shadowOffsetY = 16;
 
-  // 5. Recipient Name: Official Google Name
-  const guestName = (appState.user && appState.user.name) ? appState.user.name : "Khách Quý";
-  drawCardRecipientName(ctx, W, guestName);
+  // Cardstock surface
+  const paperGrad = ctx.createLinearGradient(ticketX, ticketY, ticketX, ticketY + ticketH);
+  paperGrad.addColorStop(0, "#FFFFFF");
+  paperGrad.addColorStop(0.85, "#FAFCFF");
+  paperGrad.addColorStop(1, "#F3F7FC");
+  ctx.fillStyle = paperGrad;
+  ctx.fillRect(ticketX, ticketY, ticketW, ticketH);
+  ctx.restore();
 
-  // 6. Host Details: TRẦN QUỐC VIỆT
-  drawCardHostDetails(ctx, W);
+  // Subtle border around ticket
+  ctx.save();
+  ctx.strokeStyle = "rgba(203, 213, 225, 0.7)";
+  ctx.lineWidth = 1;
+  ctx.strokeRect(ticketX, ticketY, ticketW, ticketH);
+  ctx.restore();
 
-  // 7. OFFICIAL FPT LOGO IN CENTER OF THE CARD (Thay thế hoàn toàn ảnh cá nhân)
-  drawCenterFptLogo(ctx, W / 2, 645);
+  // 3. Ticket Slot / Dispenser Bezel (Top)
+  drawTicketDispenserSlot(ctx, W / 2, 95, 680, 48);
 
-  // 8. Date & Time Block
-  drawCardDateTimeBlock(ctx, W);
+  // 4. Ticket Content (Crisp Navy & Gold Palette)
+  // Section A: "Thân mời"
+  ctx.save();
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "bold 44px 'Playfair Display', Georgia, serif";
+  ctx.fillStyle = "#0F2B5C";
+  ctx.fillText("Thân mời", W / 2, 195);
 
-  // 9. Venue & Phone
-  drawCardVenueAndContact(ctx, W);
+  // Section B: "Bạn: [Guest Name]"
+  const guestName = (appState.user && appState.user.name) ? appState.user.name : "Quốc Việt";
+  ctx.font = "bold 28px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#0F2B5C";
+  ctx.fillText("Bạn: ", W / 2 - (guestName.length > 18 ? 140 : 110), 265);
 
-  // 10. Bottom Warm Line
-  drawCardBottomAccent(ctx, W, H);
+  // Recipient Script Name
+  let nameFontSize = 58;
+  if (guestName.length > 25) nameFontSize = 42;
+  else if (guestName.length > 18) nameFontSize = 48;
+  ctx.font = `bold ${nameFontSize}px 'Dancing Script', cursive`;
+  ctx.fillStyle = "#1E3A8A";
+  ctx.fillText(guestName, W / 2 + 30, 265);
+
+  // Section C: Subtitle
+  ctx.font = "500 19px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#475569";
+  ctx.fillText("Đến tham dự và cùng chia sẻ niềm vui", W / 2, 325);
+  ctx.fillText("trong ngày đặc biệt này.", W / 2, 353);
+
+  // Section D: Dotted Divider 1
+  drawDottedLine(ctx, ticketX + 45, 395, ticketX + ticketW - 45, 395, "#1E3A8A", 2.2, 11);
+
+  // Section E: Milestone Date Block (25/10/2026)
+  drawAcademicCompassIcon(ctx, ticketX + 85, 470);
+  drawDiplomaScrollIcon(ctx, ticketX + ticketW - 85, 470);
+
+  ctx.font = "900 62px 'Montserrat', sans-serif";
+  ctx.fillStyle = "#0F2B5C";
+  ctx.fillText("25/10/2026", W / 2, 470);
+
+  // Section F: Ceremony Time & Cap Icon
+  drawTicketMortarboard(ctx, W / 2, 535);
+
+  ctx.font = "bold 34px 'Playfair Display', Georgia, serif";
+  ctx.fillStyle = "#0F2B5C";
+  ctx.fillText("11:30 - 12:00", W / 2, 580);
+
+  // Section G: Venue & Address
+  ctx.font = "bold 23px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#0F2B5C";
+  ctx.fillText(CARD_CONFIG.venueName, W / 2, 638);
+
+  ctx.font = "italic 500 17px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#475569";
+  ctx.fillText("Số 600 Nguyễn Văn Cừ, phường An Bình,", W / 2, 672);
+  ctx.fillText("thành phố Cần Thơ", W / 2, 698);
+
+  ctx.font = "600 18px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#1E3A8A";
+  ctx.fillText("Hotline: 0949 373 770", W / 2, 730);
+
+  // Section H: Dotted Divider 2
+  drawDottedLine(ctx, ticketX + 45, 765, ticketX + ticketW - 45, 765, "#1E3A8A", 2.2, 11);
+
+  // Section I: Bold Ceremony Title
+  ctx.font = "900 52px 'Montserrat', 'Playfair Display', sans-serif";
+  ctx.fillStyle = "#0F2B5C";
+  ctx.letterSpacing = "2px";
+  ctx.fillText("LỄ TỐT NGHIỆP", W / 2, 835);
+
+  // Section J: Tilted Luxury Bookmark / Tag (Directly inspired by Canva reference)
+  drawTiltedBookmarkTag(ctx, W / 2, 1010);
+
+  // Section K: Warm Invitation Note
+  ctx.font = "bold 27px 'Dancing Script', cursive";
+  ctx.fillStyle = "#1E3A8A";
+  ctx.fillText("Rất hân hạnh được đón tiếp bạn!", W / 2, 1260);
+
+  // Section L: Perforated Tear Line & Bottom Serrated Edge
+  drawDottedLine(ctx, ticketX + 30, 1370, ticketX + ticketW - 30, 1370, "#64748B", 2, 9);
+  drawPerforatedEdge(ctx, ticketX, ticketY + ticketH, ticketW);
+
+  ctx.restore();
 
   if (loader) loader.classList.add('hidden');
   appState.isCardRendered = true;
@@ -1801,407 +1897,312 @@ function drawCardCanvasParticles(ctx) {
   cardCanvasParticles.forEach(p => {
     ctx.save();
     ctx.beginPath();
-    ctx.fillStyle = `rgba(255, 230, 150, ${p.alpha})`;
+    ctx.fillStyle = `rgba(255, 230, 150, ${p.alpha * 0.7})`;
     ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
     ctx.fill();
-
-    if (p.isStar) {
-      ctx.strokeStyle = `rgba(255, 235, 170, ${p.alpha * 0.75})`;
-      ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(p.x - p.radius * 3.5, p.y);
-      ctx.lineTo(p.x + p.radius * 3.5, p.y);
-      ctx.moveTo(p.x, p.y - p.radius * 3.5);
-      ctx.lineTo(p.x, p.y + p.radius * 3.5);
-      ctx.stroke();
-    }
     ctx.restore();
   });
 }
 
-function drawCardOrnamentalBorders(ctx, W, H) {
-  const outerPad = 45;
-  const innerPad = 58;
-
-  const goldGrad = createGoldGradient(ctx, outerPad, outerPad, W - outerPad, H - outerPad);
-  ctx.strokeStyle = goldGrad;
-  ctx.lineWidth = 2.5;
-  ctx.strokeRect(outerPad, outerPad, W - outerPad * 2, H - outerPad * 2);
-
-  ctx.strokeStyle = "rgba(212, 175, 55, 0.65)";
-  ctx.lineWidth = 1.2;
-  ctx.strokeRect(innerPad, innerPad, W - innerPad * 2, H - innerPad * 2);
-
-  const cornerSize = 42;
-  drawCardCornerFlourish(ctx, innerPad, innerPad, 1, 1, cornerSize);
-  drawCardCornerFlourish(ctx, W - innerPad, innerPad, -1, 1, cornerSize);
-  drawCardCornerFlourish(ctx, innerPad, H - innerPad, 1, -1, cornerSize);
-  drawCardCornerFlourish(ctx, W - innerPad, H - innerPad, -1, -1, cornerSize);
-
-  drawDiamond(ctx, W / 2, innerPad, 5, "#D4AF37");
-  drawDiamond(ctx, W / 2, H - innerPad, 5, "#D4AF37");
-}
-
-function drawCardCornerFlourish(ctx, x, y, dirX, dirY, size) {
+/**
+ * Top Metallic Dispenser Slot Capsule
+ */
+function drawTicketDispenserSlot(ctx, cx, cy, w, h) {
   ctx.save();
-  ctx.strokeStyle = "#FFE58F";
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(x + dirX * size, y);
-  ctx.lineTo(x + dirX * 12, y);
-  ctx.lineTo(x + dirX * 12, y + dirY * 12);
-  ctx.lineTo(x, y + dirY * 12);
-  ctx.lineTo(x, y + dirY * size);
-  ctx.stroke();
+  const x = cx - w / 2;
+  const y = cy - h / 2;
+  const r = h / 2;
 
-  drawDiamond(ctx, x + dirX * 18, y + dirY * 18, 4, "#D4AF37");
-  ctx.restore();
-}
-
-function drawDiamond(ctx, cx, cy, size, color) {
-  ctx.save();
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.moveTo(cx, cy - size);
-  ctx.lineTo(cx + size, cy);
-  ctx.lineTo(cx, cy + size);
-  ctx.lineTo(cx - size, cy);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-}
-
-function drawCardTopSection(ctx, W) {
-  const topY = 135;
-  drawGraduationCapIcon(ctx, W / 2, topY - 25);
-
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.font = "bold 34px 'Playfair Display', Georgia, serif";
-
-  const goldGrad = createGoldGradient(ctx, W / 2 - 120, topY, W / 2 + 120, topY);
-  ctx.fillStyle = goldGrad;
-  ctx.shadowColor = "rgba(212, 175, 55, 0.4)";
-  ctx.shadowBlur = 10;
-  ctx.fillText("THÂN MỜI", W / 2, topY + 18);
-  ctx.restore();
-}
-
-function drawGraduationCapIcon(ctx, cx, cy) {
-  ctx.save();
-  ctx.fillStyle = "#D4AF37";
-  ctx.strokeStyle = "#FFE58F";
-  ctx.lineWidth = 1.2;
-
-  ctx.beginPath();
-  ctx.moveTo(cx, cy - 14);
-  ctx.lineTo(cx + 28, cy - 3);
-  ctx.lineTo(cx, cy + 8);
-  ctx.lineTo(cx - 28, cy - 3);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(cx - 15, cy + 3);
-  ctx.lineTo(cx - 15, cy + 12);
-  ctx.bezierCurveTo(cx - 15, cy + 18, cx + 15, cy + 18, cx + 15, cy + 12);
-  ctx.lineTo(cx + 15, cy + 3);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.strokeStyle = "#FFE79A";
-  ctx.lineWidth = 1.5;
-  ctx.moveTo(cx, cy - 3);
-  ctx.lineTo(cx + 22, cy + 6);
-  ctx.lineTo(cx + 22, cy + 16);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawCardRecipientName(ctx, W, name) {
-  const safeName = (name && name.trim()) ? name.trim() : "Khách Quý";
-  const nameY = 240;
-
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  let fontSize = 70;
-  if (safeName.length > 25) fontSize = 52;
-  else if (safeName.length > 18) fontSize = 60;
-
-  ctx.font = `bold ${fontSize}px 'Dancing Script', cursive`;
-
-  const nameGrad = ctx.createLinearGradient(W / 2 - 250, nameY - 30, W / 2 + 250, nameY + 30);
-  nameGrad.addColorStop(0, "#FFF3B3");
-  nameGrad.addColorStop(0.5, "#E5B944");
-  nameGrad.addColorStop(1, "#F39C12");
-
-  ctx.fillStyle = nameGrad;
-  ctx.shadowColor = "rgba(212, 175, 55, 0.55)";
-  ctx.shadowBlur = 16;
-  ctx.fillText(safeName, W / 2, nameY);
-  ctx.restore();
-
-  drawCalligraphyUnderline(ctx, W / 2, nameY + (fontSize * 0.44));
-}
-
-function drawCalligraphyUnderline(ctx, cx, cy) {
-  ctx.save();
-  const lineHalfWidth = 140;
-  const grad = ctx.createLinearGradient(cx - lineHalfWidth, cy, cx + lineHalfWidth, cy);
-  grad.addColorStop(0, "rgba(212, 175, 55, 0)");
-  grad.addColorStop(0.5, "rgba(255, 229, 143, 0.9)");
-  grad.addColorStop(1, "rgba(212, 175, 55, 0)");
-
-  ctx.strokeStyle = grad;
-  ctx.lineWidth = 1.5;
-
-  ctx.beginPath();
-  ctx.moveTo(cx - lineHalfWidth, cy);
-  ctx.bezierCurveTo(cx - 50, cy + 4, cx - 20, cy - 3, cx, cy);
-  ctx.bezierCurveTo(cx + 20, cy - 3, cx + 50, cy + 4, cx + lineHalfWidth, cy);
-  ctx.stroke();
-
-  drawDiamond(ctx, cx, cy, 3.5, "#FFE58F");
-  ctx.restore();
-}
-
-function drawCardHostDetails(ctx, W) {
-  const lineY = 330;
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  ctx.font = "600 19px 'Be Vietnam Pro', 'Montserrat', sans-serif";
-  ctx.fillStyle = "#E2E8F0";
-  ctx.fillText("ĐẾN DỰ LỄ TỐT NGHIỆP CỦA", W / 2, lineY);
-
-  const hostNameY = lineY + 46;
-  ctx.font = "bold 40px 'Playfair Display', Georgia, serif";
-  const nameGrad = createGoldGradient(ctx, W / 2 - 190, hostNameY, W / 2 + 190, hostNameY);
-  ctx.fillStyle = nameGrad;
-  ctx.shadowColor = "rgba(212, 175, 55, 0.6)";
+  // Outer Bezel Shadow
+  ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
   ctx.shadowBlur = 18;
-  ctx.fillText(CARD_CONFIG.hostName, W / 2, hostNameY);
+  ctx.shadowOffsetY = 8;
 
-  const subY = hostNameY + 36;
-  ctx.font = "500 16px 'Be Vietnam Pro', 'Montserrat', sans-serif";
-  ctx.fillStyle = "#D4AF37";
-  ctx.shadowBlur = 0;
-  ctx.fillText(CARD_CONFIG.hostTitle, W / 2, subY);
+  // Metallic Chrome Bezel
+  const bezelGrad = ctx.createLinearGradient(x, y, x, y + h);
+  bezelGrad.addColorStop(0, "#F8FAFC");
+  bezelGrad.addColorStop(0.35, "#CBD5E1");
+  bezelGrad.addColorStop(0.7, "#94A3B8");
+  bezelGrad.addColorStop(1, "#E2E8F0");
+  ctx.fillStyle = bezelGrad;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r);
+  ctx.fill();
+
+  // Inner Slot Slit
+  ctx.shadowColor = "transparent";
+  const slotW = w - 60;
+  const slotH = 16;
+  const slotX = cx - slotW / 2;
+  const slotY = cy - slotH / 2;
+  ctx.fillStyle = "#0F172A";
+  ctx.beginPath();
+  ctx.roundRect(slotX, slotY, slotW, slotH, slotH / 2);
+  ctx.fill();
 
   ctx.restore();
 }
 
 /**
- * OFFICIAL FPT UNIVERSITY LOGO IN THE CARD CENTER
- * Renders image.png inside a luxury glassmorphism gold plaque
+ * Dotted Separator Line
  */
-function drawCenterFptLogo(ctx, cx, cy) {
+function drawDottedLine(ctx, x1, y1, x2, y2, color, dotRadius = 2.2, gap = 11) {
   ctx.save();
+  ctx.fillStyle = color;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const count = Math.floor(dist / gap);
 
-  const plaqueW = 500;
-  const plaqueH = 220;
-  const px = cx - plaqueW / 2;
-  const py = cy - plaqueH / 2;
+  for (let i = 0; i <= count; i++) {
+    const t = i / count;
+    const px = x1 + dx * t;
+    const py = y1 + dy * t;
+    ctx.beginPath();
+    ctx.arc(px, py, dotRadius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
 
-  // Luminous aura behind plaque
-  const aura = ctx.createRadialGradient(cx, cy, 60, cx, cy, 270);
-  aura.addColorStop(0, "rgba(212, 175, 55, 0.28)");
-  aura.addColorStop(0.5, "rgba(22, 42, 82, 0.15)");
-  aura.addColorStop(1, "rgba(0, 0, 0, 0)");
-  ctx.fillStyle = aura;
-  ctx.fillRect(px - 40, py - 40, plaqueW + 80, plaqueH + 80);
+/**
+ * Academic Compass / Seal Emblem Icon
+ */
+function drawAcademicCompassIcon(ctx, cx, cy) {
+  ctx.save();
+  ctx.strokeStyle = "#1E3A8A";
+  ctx.lineWidth = 1.8;
 
-  // Glass plaque backing
-  const plaqueGrad = ctx.createLinearGradient(px, py, px, py + plaqueH);
-  plaqueGrad.addColorStop(0, "rgba(16, 34, 72, 0.85)");
-  plaqueGrad.addColorStop(1, "rgba(8, 18, 42, 0.92)");
-  ctx.fillStyle = plaqueGrad;
+  // Outer ring
   ctx.beginPath();
-  ctx.roundRect(px, py, plaqueW, plaqueH, 20);
+  ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Inner ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, 16, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // 8-point compass star
+  ctx.fillStyle = "#1E3A8A";
+  for (let i = 0; i < 4; i++) {
+    const angle = (i * Math.PI) / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle - 0.2) * 5, cy + Math.sin(angle - 0.2) * 5);
+    ctx.lineTo(cx + Math.cos(angle) * 14, cy + Math.sin(angle) * 14);
+    ctx.lineTo(cx + Math.cos(angle + 0.2) * 5, cy + Math.sin(angle + 0.2) * 5);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+/**
+ * Rolled Diploma Scroll Icon
+ */
+function drawDiplomaScrollIcon(ctx, cx, cy) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(-0.25);
+
+  ctx.strokeStyle = "#1E3A8A";
+  ctx.lineWidth = 1.8;
+  ctx.fillStyle = "#FFFFFF";
+
+  // Cylinder body
+  ctx.fillRect(-22, -9, 44, 18);
+  ctx.strokeRect(-22, -9, 44, 18);
+
+  // Rolled ends
+  ctx.beginPath();
+  ctx.ellipse(-22, 0, 4, 9, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(22, 0, 4, 9, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Red/Gold tie ribbon
+  ctx.fillStyle = "#DC2626";
+  ctx.fillRect(-4, -9.5, 8, 19);
+  ctx.fillStyle = "#D4AF37";
+  ctx.fillRect(-1.5, -9.5, 3, 19);
+
+  ctx.restore();
+}
+
+/**
+ * Mortarboard Cap Icon above time
+ */
+function drawTicketMortarboard(ctx, cx, cy) {
+  ctx.save();
+  ctx.fillStyle = "#1E3A8A";
+  ctx.strokeStyle = "#1E3A8A";
+  ctx.lineWidth = 1.5;
+
+  // Cap diamond top
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - 14);
+  ctx.lineTo(cx + 28, cy - 4);
+  ctx.lineTo(cx, cy + 6);
+  ctx.lineTo(cx - 28, cy - 4);
+  ctx.closePath();
   ctx.fill();
 
-  // Double gold accent border
-  const borderGrad = createGoldGradient(ctx, px, py, px + plaqueW, py + plaqueH);
-  ctx.strokeStyle = borderGrad;
-  ctx.lineWidth = 2.5;
+  // Cap skull base
+  ctx.beginPath();
+  ctx.moveTo(cx - 15, cy + 2);
+  ctx.lineTo(cx - 15, cy + 11);
+  ctx.bezierCurveTo(cx - 15, cy + 16, cx + 15, cy + 16, cx + 15, cy + 11);
+  ctx.lineTo(cx + 15, cy + 2);
+  ctx.closePath();
+  ctx.fill();
+
+  // Golden Tassel
+  ctx.strokeStyle = "#D4AF37";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - 4);
+  ctx.lineTo(cx + 22, cy + 4);
+  ctx.lineTo(cx + 22, cy + 16);
   ctx.stroke();
 
-  ctx.strokeStyle = "rgba(255, 235, 160, 0.5)";
+  ctx.fillStyle = "#D4AF37";
+  ctx.fillRect(cx + 20, cy + 16, 4, 4);
+
+  ctx.restore();
+}
+
+/**
+ * Tilted Luxury Bookmark / Tag (Directly inspired by Canva reference image)
+ */
+function drawTiltedBookmarkTag(ctx, cx, cy) {
+  ctx.save();
+
+  // 1. Lower Amber-Gold Ribbon Banner (tilted at -3 deg)
+  ctx.save();
+  ctx.translate(cx + 10, cy + 42);
+  ctx.rotate(-0.05);
+
+  const bannerW = 340;
+  const bannerH = 46;
+  const bx = -bannerW / 2;
+  const by = -bannerH / 2;
+
+  ctx.shadowColor = "rgba(0, 0, 0, 0.22)";
+  ctx.shadowBlur = 12;
+  ctx.shadowOffsetY = 6;
+
+  // Gold gradient fill
+  const bannerGrad = ctx.createLinearGradient(bx, by, bx + bannerW, by);
+  bannerGrad.addColorStop(0, "#E5B944");
+  bannerGrad.addColorStop(0.5, "#FCD34D");
+  bannerGrad.addColorStop(1, "#D4AF37");
+  ctx.fillStyle = bannerGrad;
+  ctx.beginPath();
+  ctx.roundRect(bx, by, bannerW, bannerH, 6);
+  ctx.fill();
+
+  ctx.shadowColor = "transparent";
+  ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#0F2B5C";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("Kỹ Thuật Phần Mềm • ĐH FPT Cần Thơ", 0, 0);
+  ctx.restore();
+
+  // 2. Main Sapphire Blue Bookmark Tag (tilted at -9 deg)
+  ctx.save();
+  ctx.translate(cx - 15, cy - 10);
+  ctx.rotate(-0.16);
+
+  const tagW = 320;
+  const tagH = 90;
+  const tx = -tagW / 2;
+  const ty = -tagH / 2;
+
+  // Drop shadow
+  ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+  ctx.shadowBlur = 16;
+  ctx.shadowOffsetY = 8;
+
+  // Sapphire Royal Blue Gradient
+  const tagGrad = ctx.createLinearGradient(tx, ty, tx + tagW, ty + tagH);
+  tagGrad.addColorStop(0, "#163472");
+  tagGrad.addColorStop(0.5, "#0F2B5C");
+  tagGrad.addColorStop(1, "#0A1D42");
+  ctx.fillStyle = tagGrad;
+  ctx.beginPath();
+  ctx.roundRect(tx, ty, tagW, tagH, 8);
+  ctx.fill();
+
+  // Subtle inner border
+  ctx.shadowColor = "transparent";
+  ctx.strokeStyle = "rgba(255, 229, 143, 0.4)";
   ctx.lineWidth = 1;
+  ctx.strokeRect(tx + 4, ty + 4, tagW - 8, tagH - 8);
+
+  // Left Hole with Golden Ring & Hanging Ribbon Thread
+  const holeX = tx + 20;
+  const holeY = 0;
+  ctx.fillStyle = "#FFFFFF";
   ctx.beginPath();
-  ctx.roundRect(px + 8, py + 8, plaqueW - 16, plaqueH - 16, 14);
+  ctx.arc(holeX, holeY, 6, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = "#D4AF37";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(holeX, holeY, 7, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Corner gold pins
-  drawDiamond(ctx, px + 18, py + 18, 3.5, "#FFE58F");
-  drawDiamond(ctx, px + plaqueW - 18, py + 18, 3.5, "#FFE58F");
-  drawDiamond(ctx, px + 18, py + plaqueH - 18, 3.5, "#FFE58F");
-  drawDiamond(ctx, px + plaqueW - 18, py + plaqueH - 18, 3.5, "#FFE58F");
+  // Golden loop thread extending to the left
+  ctx.strokeStyle = "#FFE58F";
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.moveTo(holeX, holeY);
+  ctx.bezierCurveTo(holeX - 45, holeY - 15, holeX - 65, holeY + 25, holeX - 85, holeY + 10);
+  ctx.stroke();
 
-  // Draw FPT Logo image (image.png)
-  if (appState.fptLogoLoaded && appState.fptLogoImage) {
-    const img = appState.fptLogoImage;
-    const aspect = img.width / img.height;
+  ctx.beginPath();
+  ctx.moveTo(holeX, holeY);
+  ctx.bezierCurveTo(holeX - 40, holeY - 25, holeX - 70, holeY + 10, holeX - 95, holeY + 20);
+  ctx.stroke();
 
-    // Plaque max content box: 440 x 175
-    let drawW = 440;
-    let drawH = drawW / aspect;
-    if (drawH > 175) {
-      drawH = 175;
-      drawW = drawH * aspect;
-    }
+  // Host Name inside Tag
+  ctx.font = "bold 46px 'Dancing Script', cursive";
+  ctx.fillStyle = "#FFE58F";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+  ctx.shadowBlur = 6;
+  ctx.fillText("Trần Quốc Việt", 10, 0);
 
-    const drawX = cx - drawW / 2;
-    const drawY = cy - drawH / 2;
+  ctx.restore();
+  ctx.restore();
+}
 
-    ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
-    ctx.shadowBlur = 8;
-    ctx.drawImage(img, drawX, drawY, drawW, drawH);
-  } else {
-    // Stylized fallback while image loads
-    ctx.fillStyle = "#FF7A00";
-    ctx.font = "bold 32px 'Montserrat', sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("FPT UNIVERSITY", cx, cy - 10);
+/**
+ * Perforated Serrated Cuts at Bottom Edge
+ */
+function drawPerforatedEdge(ctx, x, y, width) {
+  ctx.save();
+  ctx.fillStyle = "#0A1D42"; // Matches ambient background at bottom
 
-    ctx.fillStyle = "#D4AF37";
-    ctx.font = "600 16px 'Be Vietnam Pro', sans-serif";
-    ctx.fillText("ĐẠI HỌC FPT CẦN THƠ", cx, cy + 28);
+  const toothWidth = 20;
+  const toothHeight = 12;
+  const count = Math.ceil(width / toothWidth);
+
+  for (let i = 0; i < count; i++) {
+    const tx = x + i * toothWidth;
+    ctx.beginPath();
+    ctx.moveTo(tx, y);
+    ctx.lineTo(tx + toothWidth / 2, y - toothHeight);
+    ctx.lineTo(tx + toothWidth, y);
+    ctx.closePath();
+    ctx.fill();
   }
-
-  ctx.restore();
-}
-
-function drawCardDateTimeBlock(ctx, W) {
-  const blockY = 850;
-  drawGoldDividerLine(ctx, W / 2, blockY, 340);
-
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  const headerY = blockY + 38;
-  ctx.font = "bold 23px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = "#FFE58F";
-  ctx.fillText(CARD_CONFIG.dateHeader, W / 2, headerY);
-
-  const rowCenterY = headerY + 68;
-
-  ctx.font = "bold 22px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = "#FFFFFF";
-  ctx.fillText(CARD_CONFIG.dayOfWeek, W / 2 - 180, rowCenterY);
-
-  drawCardVerticalSeparator(ctx, W / 2 - 80, rowCenterY - 38, rowCenterY + 38);
-
-  ctx.font = "bold 78px 'Playfair Display', Georgia, serif";
-  const numGrad = createGoldGradient(ctx, W / 2 - 50, rowCenterY - 40, W / 2 + 50, rowCenterY + 40);
-  ctx.fillStyle = numGrad;
-  ctx.shadowColor = "rgba(212, 175, 55, 0.7)";
-  ctx.shadowBlur = 20;
-  ctx.fillText(CARD_CONFIG.dayOfMonth, W / 2, rowCenterY + 4);
-
-  drawCardVerticalSeparator(ctx, W / 2 + 80, rowCenterY - 38, rowCenterY + 38);
-
-  ctx.font = "bold 21px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = "#FFFFFF";
-  ctx.shadowBlur = 0;
-  ctx.fillText(CARD_CONFIG.time, W / 2 + 185, rowCenterY);
-
-  const yearY = rowCenterY + 58;
-  ctx.font = "bold 20px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = "#D4AF37";
-  ctx.fillText(`— NĂM ${CARD_CONFIG.year} —`, W / 2, yearY);
-  ctx.restore();
-
-  drawGoldDividerLine(ctx, W / 2, yearY + 32, 340);
-}
-
-function drawCardVerticalSeparator(ctx, x, y1, y2) {
-  ctx.save();
-  const grad = ctx.createLinearGradient(x, y1, x, y2);
-  grad.addColorStop(0, "rgba(212, 175, 55, 0.1)");
-  grad.addColorStop(0.5, "rgba(255, 229, 143, 0.85)");
-  grad.addColorStop(1, "rgba(212, 175, 55, 0.1)");
-  ctx.strokeStyle = grad;
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.moveTo(x, y1);
-  ctx.lineTo(x, y2);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawGoldDividerLine(ctx, cx, cy, width) {
-  ctx.save();
-  const half = width / 2;
-  const grad = ctx.createLinearGradient(cx - half, cy, cx + half, cy);
-  grad.addColorStop(0, "rgba(212, 175, 55, 0)");
-  grad.addColorStop(0.5, "rgba(255, 229, 143, 0.85)");
-  grad.addColorStop(1, "rgba(212, 175, 55, 0)");
-
-  ctx.strokeStyle = grad;
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.moveTo(cx - half, cy);
-  ctx.lineTo(cx + half, cy);
-  ctx.stroke();
-
-  drawDiamond(ctx, cx, cy, 4, "#FFE58F");
-  ctx.restore();
-}
-
-function drawCardVenueAndContact(ctx, W) {
-  const venueStartY = 1125;
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  ctx.font = "bold 15px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = "#D4AF37";
-  ctx.fillText("ĐỊA ĐIỂM TỔ CHỨC", W / 2, venueStartY);
-
-  const nameY = venueStartY + 38;
-  ctx.font = "bold 23px 'Be Vietnam Pro', 'Montserrat', sans-serif";
-  ctx.fillStyle = "#FFFFFF";
-  ctx.fillText(CARD_CONFIG.venueName, W / 2, nameY);
-
-  const addr1Y = nameY + 36;
-  ctx.font = "500 17px 'Be Vietnam Pro', 'Montserrat', sans-serif";
-  ctx.fillStyle = "#CBD5E1";
-  ctx.fillText(CARD_CONFIG.venueAddressLine1, W / 2, addr1Y);
-
-  const addr2Y = addr1Y + 28;
-  ctx.fillText(CARD_CONFIG.venueAddressLine2, W / 2, addr2Y);
-
-  const phoneY = addr2Y + 44;
-  ctx.font = "600 22px 'Be Vietnam Pro', 'Montserrat', sans-serif";
-  ctx.fillStyle = "#FFE58F";
-  ctx.fillText(CARD_CONFIG.phone, W / 2, phoneY);
-  ctx.restore();
-}
-
-function drawCardBottomAccent(ctx, W, H) {
-  const quoteY = 1382;
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  ctx.font = "bold 27px 'Dancing Script', cursive";
-  ctx.fillStyle = "#FFE58F";
-  ctx.fillText("Hãy đến và cùng chụp vài tấm hình nhé", W / 2, quoteY);
-
-  const starY = quoteY + 34;
-  drawDiamond(ctx, W / 2 - 24, starY, 2.5, "rgba(212, 175, 55, 0.6)");
-  drawDiamond(ctx, W / 2, starY, 4, "#FFE58F");
-  drawDiamond(ctx, W / 2 + 24, starY, 2.5, "rgba(212, 175, 55, 0.6)");
   ctx.restore();
 }
 

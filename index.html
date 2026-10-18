@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Dancing+Script:wght@600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Montserrat:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Dancing+Script:wght@600;700&family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Montserrat:wght@500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&display=swap"
     rel="stylesheet">
 
   <!-- FontAwesome Icons -->
@@ -25,7 +25,7 @@
   <!-- Google Identity Services (GIS) Client -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <link rel="stylesheet" href="styles.css?v=20261020">
+  <link rel="stylesheet" href="styles.css?v=20261021">
 </head>
 
 <body>
@@ -44,7 +44,7 @@
       </div>
 
       <h1 class="main-title">
-        THÂN MỜI BẠN ĐẾN DỰ LỄ TỐT NGHIỆP CỦA <span class="gold-text">QUỐC VIỆT</span>
+        THƯƠNG MỜI BẠN ĐẾN DỰ LỄ TỐT NGHIỆP CỦA <span class="gold-text">QUỐC VIỆT</span>
       </h1>
 
       <p class="hero-subtitle">
@@ -82,7 +82,7 @@
       </section>
 
       <!-- ======================================================== -->
-      <!-- STATE 2: GIẢ LẬP MÁY CHƠI GAME CẦM TAY (RETRO HANDHELD CONSOLE) -->
+      <!-- STATE 2: HANDHELD GAME CONSOLE (B DUCK LEFT, A JUMP RIGHT) -->
       <!-- ======================================================== -->
       <section id="gameSection" class="game-section-card" style="display: none;">
         <!-- Logged-in User Header Bar -->
@@ -93,23 +93,23 @@
               <i id="gameUserAvatarIcon" class="fa-solid fa-graduation-cap default-avatar-icon"></i>
             </div>
             <div class="user-meta-compact">
-              <span class="player-tag"><i class="fa-solid fa-gamepad"></i> TÂN CỬ NHÂN</span>
-              <h3 class="player-name" id="gamePlayerName">Khách Quý</h3>
+              <span class="player-tag"><i class="fa-solid fa-gamepad"></i> PLAYER</span>
+              <h3 class="player-name" id="gamePlayerName">Guest</h3>
             </div>
           </div>
 
           <div class="game-bar-actions">
-            <button id="skipToCardBtn" class="btn btn-sm btn-outline-gold" title="Xem thiệp ngay không cần chơi">
-              <i class="fa-solid fa-envelope-open-text"></i> Xem Thiệp Dưới Đây
+            <button id="skipToCardBtn" class="btn btn-sm btn-outline-gold" title="View invitation card directly">
+              <i class="fa-solid fa-envelope-open-text"></i> View Invitation Below
             </button>
-            <button id="switchAccountBtnTop" class="btn btn-sm btn-outline-danger" title="Đổi tài khoản khác">
-              <i class="fa-solid fa-arrow-right-from-bracket"></i> Đổi tài khoản
+            <button id="switchAccountBtnTop" class="btn btn-sm btn-outline-danger" title="Switch account">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
             </button>
           </div>
         </div>
 
         <!-- ======================================================== -->
-        <!-- HANDHELD GAME CONSOLE HARDWARE CASING (MÁY CHƠI GAME) -->
+        <!-- HANDHELD GAME CONSOLE CASING -->
         <!-- ======================================================== -->
         <div class="handheld-console">
           <!-- Console Top Bezel / Power LED -->
@@ -128,13 +128,13 @@
             </div>
           </div>
 
-          <!-- Console Screen Bezel -->
+          <!-- Console Screen Housing -->
           <div class="console-screen-housing">
-            <!-- Screen Header HUD -->
+            <!-- Screen Header HUD (ENGLISH) -->
             <div class="screen-hud">
-              <!-- Hearts (Mạng sống) -->
-              <div class="hud-hearts-box" title="Số mạng còn lại">
-                <span class="hud-label">MẠNG:</span>
+              <!-- Lives -->
+              <div class="hud-hearts-box" title="Remaining Lives">
+                <span class="hud-label">LIVES:</span>
                 <div id="hudHearts" class="hud-hearts">
                   <i class="fa-solid fa-heart heart-active"></i>
                   <i class="fa-solid fa-heart heart-active"></i>
@@ -142,11 +142,11 @@
                 </div>
               </div>
 
-              <!-- Score & Milestone Progress Bar -->
+              <!-- Score & Progress -->
               <div class="hud-progress-group">
                 <div class="progress-labels">
-                  <span class="milestone-badge">MỤC TIÊU: 2026 ĐIỂM</span>
-                  <span class="score-display">ĐIỂM: <strong id="hudScore" class="gold-glow-text">0</strong> / 2026</span>
+                  <span class="milestone-badge">GOAL: 2026 PTS</span>
+                  <span class="score-display">SCORE: <strong id="hudScore" class="gold-glow-text">0</strong> / 2026</span>
                 </div>
                 <div class="progress-track">
                   <div id="hudProgressBar" class="progress-fill" style="width: 0%;">
@@ -164,50 +164,50 @@
             <div class="screen-canvas-wrapper" id="gameCanvasWrapper">
               <canvas id="gameCanvas" width="800" height="400"></canvas>
 
-              <!-- Start Overlay -->
+              <!-- Start Overlay (ENGLISH) -->
               <div id="gameStartOverlay" class="canvas-overlay start-overlay">
                 <div class="overlay-box">
                   <div class="overlay-badge-icon">🎓</div>
-                  <h3 class="overlay-title">ĐƯỜNG ĐẾN NGÀY TỐT NGHIỆP</h3>
+                  <h3 class="overlay-title">ROAD TO GRADUATION</h3>
                   <p class="overlay-desc">
-                    Sử dụng các nút bấm trên máy: bấm <strong>A (NHẢY)</strong> để nhảy qua chướng ngại vật mặt đất và <strong>B (CÚI)</strong>
-                    để né chướng ngại vật trên không! Nhặt <strong class="text-danger">❤️ Trái Tim</strong> để hồi sinh mạng và cán đích <strong>2026 điểm</strong>!
+                    Press <strong>[ A ] to JUMP</strong> over ground hazards and <strong>[ B ] to DUCK</strong> under floating obstacles!
+                    Collect <strong class="text-danger">❤️ HEARTS</strong> to restore lives and reach <strong>2026 PTS</strong>!
                   </p>
                   <button id="startGameBtn" class="btn btn-console-action">
-                    <i class="fa-solid fa-play"></i> BẮT ĐẦU CHƠI
+                    <i class="fa-solid fa-play"></i> START GAME (PRESS A)
                   </button>
                 </div>
               </div>
 
-              <!-- Game Over Overlay -->
+              <!-- Game Over Overlay (ENGLISH) -->
               <div id="gameOverOverlay" class="canvas-overlay gameover-overlay" style="display: none;">
                 <div class="overlay-box">
                   <div class="overlay-badge-icon">💥</div>
-                  <h3 class="overlay-title text-danger">CHƯA KỊP TỐT NGHIỆP!</h3>
+                  <h3 class="overlay-title text-danger">GRADUATION DELAYED!</h3>
                   <p class="overlay-desc" id="gameOverReason">
-                    Bạn đã hết 3 mạng. Hãy thử lại để chinh phục chặng đường 2026 điểm nhé!
+                    You ran out of lives! Try again to achieve 2026 PTS and graduate!
                   </p>
                   <div class="overlay-actions">
                     <button id="restartGameBtn" class="btn btn-console-action">
-                      <i class="fa-solid fa-rotate-left"></i> CHƠI LẠI
+                      <i class="fa-solid fa-rotate-left"></i> RETRY (PRESS A)
                     </button>
                     <button id="skipAfterLoseBtn" class="btn btn-secondary">
-                      <i class="fa-solid fa-envelope-open"></i> XEM THIỆP PHÍA DƯỚI
+                      <i class="fa-solid fa-envelope-open"></i> VIEW INVITATION
                     </button>
                   </div>
                 </div>
               </div>
 
-              <!-- Milestone 2026 Victory Overlay (Tối ưu nhỏ gọn, vừa vặn trên điện thoại) -->
+              <!-- Milestone 2026 Victory Overlay (ENGLISH, COMPACT) -->
               <div id="gameVictoryOverlay" class="canvas-overlay victory-overlay-compact" style="display: none;">
                 <div class="compact-victory-card">
                   <div class="compact-victory-badge">🎓✨</div>
                   <div class="compact-victory-content">
-                    <h3 class="compact-victory-title gold-glow-text">🎉 CHÍNH THỨC TỐT NGHIỆP 2026!</h3>
-                    <p class="compact-victory-desc">Xuất sắc! Thiệp mời chính thức của bạn đã sẵn sàng ngay bên dưới:</p>
+                    <h3 class="compact-victory-title gold-glow-text">🎉 GRADUATION 2026 ACHIEVED!</h3>
+                    <p class="compact-victory-desc">Outstanding! Your official graduation invitation is unlocked below:</p>
                   </div>
                   <button id="scrollToCardBtn" class="btn btn-gold btn-compact-action pulse-btn">
-                    <i class="fa-solid fa-arrow-down"></i> XEM THIỆP MỜI BÊN DƯỚI
+                    <i class="fa-solid fa-arrow-down"></i> VIEW INVITATION BELOW
                   </button>
                 </div>
               </div>
@@ -215,30 +215,22 @@
           </div>
 
           <!-- ======================================================== -->
-          <!-- HANDHELD CONTROLLER PAD (BÀN ĐIỀU KHIỂN NÚT BẤM THỰC TẾ) -->
+          <!-- DUAL-THUMB ARCADE CONTROLS: [ B ] DUCK LEFT • [ A ] JUMP RIGHT -->
+          <!-- (Đã cắt giảm D-Pad 4 hướng, tối ưu hoàn hảo cho 2 ngón tay cái) -->
           <!-- ======================================================== -->
           <div class="console-controls-deck">
-            <!-- Left: Directional D-Pad (Thao tác Cúi & Nhảy) -->
-            <div class="dpad-container">
-              <div class="dpad">
-                <button id="btnDpadUp" class="dpad-btn dpad-up" title="Nhảy lên">
-                  <i class="fa-solid fa-caret-up"></i>
-                </button>
-                <div class="dpad-center"></div>
-                <button id="btnDpadDown" class="dpad-btn dpad-down" title="Cúi người">
-                  <i class="fa-solid fa-caret-down"></i>
-                </button>
-                <button id="btnDpadLeft" class="dpad-btn dpad-left" title="Trái">
-                  <i class="fa-solid fa-caret-left"></i>
-                </button>
-                <button id="btnDpadRight" class="dpad-btn dpad-right" title="Phải">
-                  <i class="fa-solid fa-caret-right"></i>
-                </button>
+            <!-- Left Side: Button B (CÚI / DUCK) -->
+            <div class="deck-button-group deck-left">
+              <button id="btnActionB" class="arcade-round-btn btn-b" title="Duck under floating obstacles">
+                <span>B</span>
+              </button>
+              <div class="arcade-btn-meta">
+                <span class="arcade-btn-name">DUCK</span>
+                <span class="arcade-btn-hint">(DOWN / S)</span>
               </div>
-              <span class="control-sublabel">D-PAD (⬆ NHẢY • ⬇ CÚI)</span>
             </div>
 
-            <!-- Center: SELECT / START & Speaker Grill -->
+            <!-- Center: Audio & Pause Controls + Speaker Grill -->
             <div class="center-controls-cluster">
               <div class="speaker-grill">
                 <div class="speaker-hole"></div><div class="speaker-hole"></div><div class="speaker-hole"></div>
@@ -248,60 +240,49 @@
 
               <div class="pill-buttons-row">
                 <div class="pill-btn-group">
-                  <button id="btnSoundSelect" class="pill-btn" title="Bật/Tắt âm thanh">
+                  <button id="btnSoundSelect" class="pill-btn" title="Toggle Sound">
                     <i class="fa-solid fa-volume-high" id="soundIcon"></i>
                   </button>
-                  <span class="pill-label">ÂM THANH</span>
+                  <span class="pill-label">SOUND</span>
                 </div>
                 <div class="pill-btn-group">
-                  <button id="btnPauseStart" class="pill-btn" title="Tạm dừng / Tiếp tục">
+                  <button id="btnPauseStart" class="pill-btn" title="Pause / Resume">
                     <i class="fa-solid fa-pause" id="pauseIcon"></i>
                   </button>
-                  <span class="pill-label">TẠM DỪNG</span>
+                  <span class="pill-label">PAUSE</span>
                 </div>
               </div>
             </div>
 
-            <!-- Right: Action Buttons A (Nhảy) & B (Cúi Người) -->
-            <div class="action-buttons-container">
-              <div class="action-buttons-pair">
-                <!-- Button B (CÚI NGƯỜI) -->
-                <div class="arcade-btn-cluster">
-                  <button id="btnActionB" class="arcade-round-btn btn-b" title="Cúi người">
-                    <span>B</span>
-                  </button>
-                  <span class="arcade-btn-label">CÚI (DOWN)</span>
-                </div>
-
-                <!-- Button A (NHẢY) -->
-                <div class="arcade-btn-cluster">
-                  <button id="btnActionA" class="arcade-round-btn btn-a" title="Nhảy lên">
-                    <span>A</span>
-                  </button>
-                  <span class="arcade-btn-label">NHẢY (SPACE)</span>
-                </div>
+            <!-- Right Side: Button A (NHẢY / JUMP / START) -->
+            <div class="deck-button-group deck-right">
+              <button id="btnActionA" class="arcade-round-btn btn-a" title="Jump / Start">
+                <span>A</span>
+              </button>
+              <div class="arcade-btn-meta">
+                <span class="arcade-btn-name">JUMP</span>
+                <span class="arcade-btn-hint">(SPACE / UP)</span>
               </div>
-              <span class="control-sublabel">NÚT HÀNH ĐỘNG</span>
             </div>
           </div>
 
-          <!-- Console Item & Obstacle Quick Guide -->
+          <!-- Console Item & Obstacle Quick Guide (ENGLISH) -->
           <div class="console-item-guide">
             <div class="guide-item">
-              <span class="guide-tag tag-jump"><i class="fa-solid fa-arrow-up"></i> NHẢY NÉ:</span>
-              <span>💻 Đồ Án, 📑 Báo Cáo</span>
+              <span class="guide-tag tag-jump"><i class="fa-solid fa-arrow-up"></i> JUMP [A]:</span>
+              <span>💻 THESIS, 📑 REPORT</span>
             </div>
             <div class="guide-item">
-              <span class="guide-tag tag-duck"><i class="fa-solid fa-arrow-down"></i> CÚI NÉ:</span>
-              <span>📝 Thi Lại (Bay), ⏰ Deadline</span>
+              <span class="guide-tag tag-duck"><i class="fa-solid fa-arrow-down"></i> DUCK [B]:</span>
+              <span>📝 RETAKE, ⏰ DEADLINE</span>
             </div>
             <div class="guide-item">
-              <span class="guide-tag tag-heart"><i class="fa-solid fa-heart"></i> HỒI SINH:</span>
-              <span>❤️ Trái Tim (+1 Mạng)</span>
+              <span class="guide-tag tag-heart"><i class="fa-solid fa-heart"></i> HEAL:</span>
+              <span>❤️ HEART (+1 LIFE)</span>
             </div>
             <div class="guide-item">
-              <span class="guide-tag tag-point"><i class="fa-solid fa-star"></i> ĐIỂM:</span>
-              <span>🌟 A+ (+100), 📜 Bằng Khen (+150), ☕ Cà Phê (+50)</span>
+              <span class="guide-tag tag-point"><i class="fa-solid fa-star"></i> POINTS:</span>
+              <span>🌟 A+ (+100), 📜 DIPLOMA (+150), ☕ COFFEE (+50)</span>
             </div>
           </div>
         </div>
@@ -309,7 +290,6 @@
 
       <!-- ======================================================== -->
       <!-- STATE 3: THIỆP MỜI TỐT NGHIỆP HIỆN TRỰC TIẾP PHÍA DƯỚI MÁY CHƠI GAME -->
-      <!-- (Không dùng modal pop-up để tránh người chơi bấm nhầm tắt) -->
       <!-- ======================================================== -->
       <section id="invitationSection" class="glass-card invitation-section-card" style="display: none;">
         <!-- Card Section Header -->
@@ -320,10 +300,10 @@
             </span>
           </div>
           <h2 class="invitation-main-heading">
-            CHÚC MỪNG TÂN CỬ NHÂN: <span id="cardGuestName" class="gold-text">Khách Quý</span> 🎉
+            THƯƠNG MỜI: <span id="cardGuestName" class="gold-text">Khách Quý</span> 🎉
           </h2>
           <p class="invitation-desc">
-            Tấm thiệp độc quyền dưới đây được tạo riêng cho bạn. Hãy lưu lại hoặc thêm vào lịch để cùng chung vui nhé!
+            Đến tham dự và cùng chia sẻ niềm vui với Quốc Việt trong ngày lễ tốt nghiệp đặc biệt này!
           </p>
         </div>
 
@@ -427,7 +407,7 @@
   <!-- Notification Toast -->
   <div id="toast" class="toast-notification"></div>
 
-  <script src="app.js?v=20261020"></script>
+  <script src="app.js?v=20261021"></script>
 </body>
 
 </html>
