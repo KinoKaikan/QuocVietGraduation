@@ -26,7 +26,7 @@ const CARD_CONFIG = {
   dateHeader: "THÁNG 10",
   dayOfWeek: "CHỦ NHẬT",
   dayOfMonth: "25",
-  time: "11:30 - 12:00",
+  time: "10:30 - 12:00",
   year: "2026",
   venueName: "Trường Đại Học FPT Cần Thơ",
   venueAddressLine1: "Số 600, đường Nguyễn Văn Cừ nối dài, phường An Bình,",
@@ -1809,33 +1809,67 @@ function renderInvitationCard() {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  ctx.font = "600 20px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#FFE58F";
-  ctx.fillText("THÂN GỬI BẠN", W / 2, 275);
-
   // Recipient Script Name
   let nameFontSize = 66;
   if (guestName.length > 25) nameFontSize = 46;
   else if (guestName.length > 18) nameFontSize = 54;
   ctx.font = `bold ${nameFontSize}px 'Dancing Script', cursive`;
 
-  const nameGrad = ctx.createLinearGradient(W / 2 - 250, 335, W / 2 + 250, 335);
+  const nameGrad = ctx.createLinearGradient(W / 2 - 250, 325, W / 2 + 250, 325);
   nameGrad.addColorStop(0, "#FFF3B3");
   nameGrad.addColorStop(0.5, "#FFDF73");
   nameGrad.addColorStop(1, "#E5A93C");
   ctx.fillStyle = nameGrad;
   ctx.shadowColor = "rgba(212, 175, 55, 0.7)";
   ctx.shadowBlur = 18;
-  ctx.fillText(guestName, W / 2, 335);
+  ctx.fillText(guestName, W / 2, 325);
+  ctx.restore();
 
+  // Highlighted Invitation Subtitle (Bigger font & prominent gold "Quốc Việt")
+  ctx.save();
+  ctx.textBaseline = "middle";
+
+  const prefixText = "Đến tham dự và cùng chia sẻ khoảnh khắc tốt nghiệp ý nghĩa cùng ";
+  const highlightName = "Quốc Việt";
+
+  ctx.font = "500 21px 'Be Vietnam Pro', sans-serif";
+  const prefixW = ctx.measureText(prefixText).width;
+
+  ctx.font = "bold 23px 'Playfair Display', Georgia, serif";
+  const nameW = ctx.measureText(highlightName).width;
+
+  const totalLineW = prefixW + nameW;
+  const lineStartX = (W - totalLineW) / 2;
+  const lineY = 385;
+
+  // Draw prefix
+  ctx.textAlign = "left";
+  ctx.font = "500 21px 'Be Vietnam Pro', sans-serif";
+  ctx.fillStyle = "#E2E8F0";
   ctx.shadowColor = "transparent";
-  ctx.font = "500 18px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#CBD5E1";
-  ctx.fillText("Đến tham dự và cùng chia sẻ khoảnh khắc tốt nghiệp ý nghĩa cùng Quốc Việt", W / 2, 390);
+  ctx.shadowBlur = 0;
+  ctx.fillText(prefixText, lineStartX, lineY);
+
+  // Draw highlighted "Quốc Việt" in gleaming gold with glow
+  ctx.font = "bold 24px 'Playfair Display', Georgia, serif";
+  const goldNameGrad = createGoldGradient(ctx, lineStartX + prefixW, lineY - 12, lineStartX + totalLineW, lineY + 12);
+  ctx.fillStyle = goldNameGrad;
+  ctx.shadowColor = "rgba(255, 223, 115, 0.95)";
+  ctx.shadowBlur = 14;
+  ctx.fillText(highlightName, lineStartX + prefixW, lineY);
+
+  // Golden underline under "Quốc Việt"
+  ctx.strokeStyle = "rgba(255, 229, 143, 0.85)";
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.moveTo(lineStartX + prefixW, lineY + 14);
+  ctx.lineTo(lineStartX + totalLineW, lineY + 14);
+  ctx.stroke();
+
   ctx.restore();
 
   // Divider
-  drawCardDivider(ctx, W / 2, 430, 700);
+  drawCardDivider(ctx, W / 2, 425, 700);
 
   // 6. Ceremony Title & Host Spotlight
   ctx.save();
@@ -1844,35 +1878,31 @@ function renderInvitationCard() {
 
   ctx.font = "bold 32px 'Playfair Display', Georgia, serif";
   ctx.fillStyle = "#FFFFFF";
-  ctx.fillText("LỄ TỐT NGHIỆP ĐẠI HỌC", W / 2, 475);
-
-  ctx.font = "600 16px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#FFE58F";
-  ctx.fillText("TÂN KỸ SƯ", W / 2, 518);
+  ctx.fillText("LỄ TỐT NGHIỆP ĐẠI HỌC", W / 2, 470);
 
   // Host Name: TRẦN QUỐC VIỆT
   ctx.font = "bold 52px 'Playfair Display', Georgia, serif";
-  const hostGrad = createGoldGradient(ctx, W / 2 - 220, 565, W / 2 + 220, 565);
+  const hostGrad = createGoldGradient(ctx, W / 2 - 220, 540, W / 2 + 220, 540);
   ctx.fillStyle = hostGrad;
   ctx.shadowColor = "rgba(212, 175, 55, 0.75)";
   ctx.shadowBlur = 20;
-  ctx.fillText(CARD_CONFIG.hostName, W / 2, 565);
+  ctx.fillText((CARD_CONFIG.hostName || "TRẦN QUỐC VIỆT"), W / 2, 540);
 
   // Host Badge
   ctx.shadowColor = "transparent";
-  drawAffiliationPill(ctx, W / 2, 618, "KỸ THUẬT PHẦN MỀM • ĐẠI HỌC FPT CẦN THƠ");
+  drawAffiliationPill(ctx, W / 2, 595, "KỸ THUẬT PHẦN MỀM • ĐẠI HỌC FPT CẦN THƠ");
   ctx.restore();
 
   // Divider
-  drawCardDivider(ctx, W / 2, 670, 700);
+  drawCardDivider(ctx, W / 2, 655, 700);
 
   // 7. Event Information Showcase Glass Cards
-  // Box 1: Thời gian buổi lễ
-  drawEventInfoCard(ctx, 120, 710, 760, 190, {
+  // Box 1: Thời gian buổi lễ (Cập nhật 10:30)
+  drawEventInfoCard(ctx, 120, 695, 760, 190, {
     icon: "calendar",
     tag: "THỜI GIAN TỔ CHỨC",
     mainText: "CHỦ NHẬT, NGÀY 25 THÁNG 10 NĂM 2026",
-    timeText: "11:30 — 12:00 TRƯA",
+    timeText: "10:30 — 12:00 TRƯA",
     subNote: "Vui lòng có mặt đúng giờ để cùng chụp ảnh kỷ niệm"
   });
 
