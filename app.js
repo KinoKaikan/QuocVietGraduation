@@ -26,7 +26,7 @@ const CARD_CONFIG = {
   dateHeader: "THÁNG 10",
   dayOfWeek: "CHỦ NHẬT",
   dayOfMonth: "25",
-  time: "10:30 - 12:00",
+  time: "10:30 - 11:30",
   year: "2026",
   venueName: "Trường Đại Học FPT Cần Thơ",
   venueAddressLine1: "Số 600, đường Nguyễn Văn Cừ nối dài, phường An Bình,",
@@ -1798,7 +1798,7 @@ function renderInvitationCard() {
   ctx.fillRect(0, 0, W, H);
 
   // Warm central golden illumination glow
-  const radialGlow = ctx.createRadialGradient(W / 2, 580, 50, W / 2, 580, 520);
+  const radialGlow = ctx.createRadialGradient(W / 2, 750, 60, W / 2, 750, 620);
   radialGlow.addColorStop(0, "rgba(212, 175, 55, 0.22)");
   radialGlow.addColorStop(0.45, "rgba(22, 42, 82, 0.18)");
   radialGlow.addColorStop(1, "rgba(0, 0, 0, 0)");
@@ -1812,22 +1812,22 @@ function renderInvitationCard() {
   drawCardLuxuryBorders(ctx, W, H);
 
   // 3. Top Academic Laurel Crest
-  drawAcademicLaurelCrest(ctx, W / 2, 120);
+  drawAcademicLaurelCrest(ctx, W / 2, 160);
 
   // 4. Formal Invitation Header
   ctx.save();
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  ctx.font = "bold 34px 'Playfair Display', Georgia, serif";
-  const headGrad = createGoldGradient(ctx, W / 2 - 140, 200, W / 2 + 140, 200);
+  ctx.font = "bold 36px 'Playfair Display', Georgia, serif";
+  const headGrad = createGoldGradient(ctx, W / 2 - 140, 260, W / 2 + 140, 260);
   ctx.fillStyle = headGrad;
   ctx.shadowColor = "rgba(212, 175, 55, 0.55)";
   ctx.shadowBlur = 12;
-  ctx.fillText("THƯƠNG MỜI", W / 2, 200);
+  ctx.fillText("THƯƠNG MỜI", W / 2, 260);
   ctx.restore();
 
-  drawDiamondFlourish(ctx, W / 2, 230, 140);
+  drawDiamondFlourish(ctx, W / 2, 296, 140);
 
   // 5. Guest Recipient Spotlight
   const guestName = (appState.user && appState.user.name) ? appState.user.name : "Khách Quý";
@@ -1837,19 +1837,19 @@ function renderInvitationCard() {
   ctx.textBaseline = "middle";
 
   // Recipient Script Name
-  let nameFontSize = 66;
-  if (guestName.length > 25) nameFontSize = 46;
-  else if (guestName.length > 18) nameFontSize = 54;
+  let nameFontSize = 70;
+  if (guestName.length > 25) nameFontSize = 48;
+  else if (guestName.length > 18) nameFontSize = 58;
   ctx.font = `bold ${nameFontSize}px 'Dancing Script', cursive`;
 
-  const nameGrad = ctx.createLinearGradient(W / 2 - 250, 325, W / 2 + 250, 325);
+  const nameGrad = ctx.createLinearGradient(W / 2 - 250, 400, W / 2 + 250, 400);
   nameGrad.addColorStop(0, "#FFF3B3");
   nameGrad.addColorStop(0.5, "#FFDF73");
   nameGrad.addColorStop(1, "#E5A93C");
   ctx.fillStyle = nameGrad;
   ctx.shadowColor = "rgba(212, 175, 55, 0.7)";
   ctx.shadowBlur = 18;
-  ctx.fillText(guestName, W / 2, 325);
+  ctx.fillText(guestName, W / 2, 400);
   ctx.restore();
 
   // Highlighted Invitation Subtitle (Streamlined & prominent gold "Quốc Việt")
@@ -1859,104 +1859,69 @@ function renderInvitationCard() {
   const prefixText = "Đến chung vui lễ tốt nghiệp cùng ";
   const highlightName = "Quốc Việt";
 
-  ctx.font = "500 21px 'Be Vietnam Pro', sans-serif";
+  ctx.font = "500 22px 'Be Vietnam Pro', sans-serif";
   const prefixW = ctx.measureText(prefixText).width;
 
-  ctx.font = "bold 23px 'Playfair Display', Georgia, serif";
+  ctx.font = "bold 25px 'Playfair Display', Georgia, serif";
   const nameW = ctx.measureText(highlightName).width;
 
   const totalLineW = prefixW + nameW;
   const lineStartX = (W - totalLineW) / 2;
-  const lineY = 385;
+  const lineY = 475;
 
   // Draw prefix
   ctx.textAlign = "left";
-  ctx.font = "500 21px 'Be Vietnam Pro', sans-serif";
+  ctx.font = "500 22px 'Be Vietnam Pro', sans-serif";
   ctx.fillStyle = "#E2E8F0";
   ctx.shadowColor = "transparent";
   ctx.shadowBlur = 0;
   ctx.fillText(prefixText, lineStartX, lineY);
 
   // Draw highlighted "Quốc Việt" in gleaming gold with glow
-  ctx.font = "bold 24px 'Playfair Display', Georgia, serif";
+  ctx.font = "bold 25px 'Playfair Display', Georgia, serif";
   const goldNameGrad = createGoldGradient(ctx, lineStartX + prefixW, lineY - 12, lineStartX + totalLineW, lineY + 12);
   ctx.fillStyle = goldNameGrad;
   ctx.shadowColor = "rgba(255, 223, 115, 0.95)";
   ctx.shadowBlur = 14;
   ctx.fillText(highlightName, lineStartX + prefixW, lineY);
-
-  // Golden underline under "Quốc Việt"
-  ctx.strokeStyle = "rgba(255, 229, 143, 0.85)";
-  ctx.lineWidth = 1.6;
-  ctx.beginPath();
-  ctx.moveTo(lineStartX + prefixW, lineY + 14);
-  ctx.lineTo(lineStartX + totalLineW, lineY + 14);
-  ctx.stroke();
-
   ctx.restore();
 
-  // Divider
-  drawCardDivider(ctx, W / 2, 425, 700);
+  // Divider 1
+  drawCardDivider(ctx, W / 2, 545, 720);
 
-  // 6. Ceremony Title & Host Spotlight (Yêu cầu: chỉ ghi Quốc Việt)
-  ctx.save();
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  ctx.font = "bold 30px 'Playfair Display', Georgia, serif";
-  ctx.fillStyle = "#FFFFFF";
-  ctx.fillText("LỄ TỐT NGHIỆP", W / 2, 470);
-
-  // Host Name: QUỐC VIỆT
-  ctx.font = "bold 58px 'Playfair Display', Georgia, serif";
-  const hostGrad = createGoldGradient(ctx, W / 2 - 180, 540, W / 2 + 180, 540);
-  ctx.fillStyle = hostGrad;
-  ctx.shadowColor = "rgba(212, 175, 55, 0.75)";
-  ctx.shadowBlur = 20;
-  ctx.fillText("QUỐC VIỆT", W / 2, 540);
-
-  // Host Badge
-  ctx.shadowColor = "transparent";
-  drawAffiliationPill(ctx, W / 2, 595, "ĐẠI HỌC FPT CẦN THƠ");
-  ctx.restore();
-
-  // Divider
-  drawCardDivider(ctx, W / 2, 650, 700);
-
-  // 7. Event Information Showcase Glass Cards (Rút gọn tinh gọn, không rườm rà)
-  // Box 1: Thời gian buổi lễ (10:30)
-  drawEventInfoCard(ctx, 120, 685, 760, 140, {
+  // 6. Event Information Showcase Glass Cards (10:30 - 11:30)
+  // Box 1: Thời gian buổi lễ (10h30 - 11h30)
+  drawEventInfoCard(ctx, 120, 615, 760, 165, {
     icon: "calendar",
     tag: "THỜI GIAN DIỄN RA",
-    timeText: "10:30 — 12:00",
+    timeText: "10:30 — 11:30",
     mainText: "Chủ Nhật, ngày 25 tháng 10 năm 2026"
   });
 
   // Box 2: Địa điểm tổ chức
-  drawEventInfoCard(ctx, 120, 845, 760, 140, {
+  drawEventInfoCard(ctx, 120, 830, 760, 165, {
     icon: "location",
     tag: "ĐỊA ĐIỂM TỔ CHỨC",
     mainText: "ĐẠI HỌC FPT CẦN THƠ",
     addressText: "Số 600, đường Nguyễn Văn Cừ nối dài, P. An Bình, Q. Ninh Kiều, TP. Cần Thơ"
   });
 
-  // Divider
-  drawCardDivider(ctx, W / 2, 1015, 700);
+  // Divider 2
+  drawCardDivider(ctx, W / 2, 1055, 720);
 
-  // 8. Warm Signature Closing (Rút gọn súc tích, sang trọng)
+  // 7. Warm Signature Closing (Lời nhắn của Quốc Việt)
   ctx.save();
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  ctx.font = "bold 36px 'Dancing Script', cursive";
+  ctx.font = "bold 38px 'Dancing Script', cursive";
   ctx.fillStyle = "#FFE58F";
   ctx.shadowColor = "rgba(212, 175, 55, 0.6)";
   ctx.shadowBlur = 12;
-  ctx.fillText("Rất hân hạnh được đón tiếp bạn!", W / 2, 1070);
+  ctx.fillText("Rất mong bạn đến và cùng chụp hình với mình!", W / 2, 1145);
 
-  // 9. Bottom Crest & Seal
-  drawBottomAcademicSeal(ctx, W / 2, 1150);
-
+  // 8. Bottom Crest & Seal
+  drawBottomAcademicSeal(ctx, W / 2, 1255);
   ctx.restore();
 
   if (loader) loader.classList.add('hidden');
@@ -2198,37 +2163,37 @@ function drawEventInfoCard(ctx, x, y, w, h, data) {
 
   if (data.icon === "calendar") {
     // Header Tag
-    ctx.font = "bold 14px 'Be Vietnam Pro', sans-serif";
+    ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
     ctx.fillStyle = "#D4AF37";
-    ctx.fillText(`🗓️ ${data.tag}`, cx, y + 30);
+    ctx.fillText(`🗓️ ${data.tag}`, cx, y + 34);
 
     // Time (big bold luxury display)
-    ctx.font = "bold 34px 'Playfair Display', Georgia, serif";
+    ctx.font = "bold 38px 'Playfair Display', Georgia, serif";
     ctx.fillStyle = "#FFFFFF";
     ctx.shadowColor = "rgba(212, 175, 55, 0.6)";
     ctx.shadowBlur = 12;
-    ctx.fillText(data.timeText, cx, y + 70);
+    ctx.fillText(data.timeText, cx, y + 80);
 
     // Date
     ctx.shadowColor = "transparent";
-    ctx.font = "bold 20px 'Be Vietnam Pro', sans-serif";
+    ctx.font = "bold 21px 'Be Vietnam Pro', sans-serif";
     ctx.fillStyle = "#FFE58F";
-    ctx.fillText(data.mainText, cx, y + 106);
+    ctx.fillText(data.mainText, cx, y + 124);
   } else if (data.icon === "location") {
     // Header Tag
-    ctx.font = "bold 14px 'Be Vietnam Pro', sans-serif";
+    ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
     ctx.fillStyle = "#D4AF37";
-    ctx.fillText(`📍 ${data.tag}`, cx, y + 30);
+    ctx.fillText(`📍 ${data.tag}`, cx, y + 34);
 
     // Main Venue
-    ctx.font = "bold 25px 'Be Vietnam Pro', sans-serif";
+    ctx.font = "bold 28px 'Be Vietnam Pro', sans-serif";
     ctx.fillStyle = "#FFE58F";
-    ctx.fillText(data.mainText, cx, y + 70);
+    ctx.fillText(data.mainText, cx, y + 80);
 
     // Address Line
-    ctx.font = "500 16px 'Be Vietnam Pro', sans-serif";
+    ctx.font = "500 17px 'Be Vietnam Pro', sans-serif";
     ctx.fillStyle = "#E2E8F0";
-    ctx.fillText(data.addressText, cx, y + 106);
+    ctx.fillText(data.addressText, cx, y + 124);
   }
 
   ctx.restore();
