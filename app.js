@@ -1056,7 +1056,7 @@ function triggerGameOver(obstacleName) {
   const overOverlay = document.getElementById('gameOverOverlay');
   const reasonText = document.getElementById('gameOverReason');
   if (reasonText) {
-    reasonText.innerHTML = `You ran out of lives after hitting <strong>${obstacleName}</strong>! Try again to reach 2026 PTS and graduate!`;
+    reasonText.innerHTML = `Hit <strong>${obstacleName}</strong>! Try again for 2026 PTS!`;
   }
   if (overOverlay) overOverlay.style.display = 'flex';
 }

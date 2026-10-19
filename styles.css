@@ -1531,6 +1531,55 @@ body {
     font-size: 0.8rem;
   }
 
+  /* Mobile Canvas Overlays (Tối ưu để không bị to, không tràn màn hình) */
+  .canvas-overlay {
+    padding: 6px !important;
+  }
+
+  .overlay-box {
+    padding: 8px 12px !important;
+    max-width: 95% !important;
+    width: 95% !important;
+    max-height: 94% !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8), 0 0 10px rgba(212, 175, 55, 0.25) !important;
+  }
+
+  .overlay-badge-icon {
+    font-size: 1.25rem !important;
+    margin-bottom: 2px !important;
+    line-height: 1 !important;
+  }
+
+  .overlay-title {
+    font-size: 0.92rem !important;
+    margin-bottom: 3px !important;
+    line-height: 1.15 !important;
+  }
+
+  .overlay-desc {
+    font-size: 0.74rem !important;
+    line-height: 1.25 !important;
+    margin-bottom: 7px !important;
+    color: var(--text-cream) !important;
+  }
+
+  .overlay-actions {
+    gap: 6px !important;
+  }
+
+  .btn-console-action {
+    padding: 6px 14px !important;
+    font-size: 0.76rem !important;
+    font-weight: 800 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 3px 0 #996515, 0 4px 10px rgba(212, 175, 55, 0.35) !important;
+  }
+
   .invitation-section-card {
     padding: 24px 14px;
     gap: 18px;
