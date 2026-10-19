@@ -21,8 +21,8 @@ const CARD_CONFIG = {
   width: 1000,
   height: 1500,
   logoSrc: "image.png",
-  hostName: "TRẦN QUỐC VIỆT",
-  hostTitle: "Kỹ Thuật Phần Mềm • ĐH FPT Cần Thơ",
+  hostName: "QUỐC VIỆT",
+  hostTitle: "Đại Học FPT Cần Thơ",
   dateHeader: "THÁNG 10",
   dayOfWeek: "CHỦ NHẬT",
   dayOfMonth: "25",
@@ -60,18 +60,18 @@ const gameState = {
   soundEnabled: true,
   audioCtx: null,
 
-  // Player character
+  // Player character (scaled up for clear mobile phone visibility)
   player: {
-    x: 90,
-    y: 256,
-    normalHeight: 64,
-    duckHeight: 34,
-    width: 44,
-    height: 64,
+    x: 80,
+    y: 232,
+    normalHeight: 88,
+    duckHeight: 44,
+    width: 58,
+    height: 88,
     vy: 0,
-    gravity: 0.68,
-    jumpForce: -13.2,
-    doubleJumpForce: -11.2,
+    gravity: 0.72,
+    jumpForce: -14.4,
+    doubleJumpForce: -12.4,
     isGrounded: true,
     isDucking: false,
     jumpCount: 0,
@@ -416,12 +416,14 @@ function handleSignOut() {
   const authSection = document.getElementById('authSection');
   const gameSection = document.getElementById('gameSection');
   const invitationSection = document.getElementById('invitationSection');
+  const manualNameInput = document.getElementById('manualNameInput');
 
+  if (manualNameInput) manualNameInput.value = "";
   if (authSection) authSection.style.display = 'block';
   if (gameSection) gameSection.style.display = 'none';
   if (invitationSection) invitationSection.style.display = 'none';
 
-  showToast("Đã đăng xuất tài khoản Google. Vui lòng đăng nhập lại!");
+  showToast("Đã đăng xuất. Bạn có thể nhập tên hoặc dùng tài khoản Google!");
 }
 
 // ==========================================
@@ -900,53 +902,53 @@ function spawnObstacle() {
   let yPos;
 
   if (isAir) {
-    // Airborne obstacle at head level: MUST DUCK [ B ] to slide underneath!
+    // Airborne obstacle at head level (width 60, height 32, y = 238..270)
+    // Standing player is [232..320] -> COLLIDES with [238..270]!
+    // Ducking player is [276..320] -> SAFELY CLEARS under [238..270]!
     const airTypes = [
-      { type: 'retake', name: 'Retake', tag: 'RETAKE', width: 44, height: 24, color: '#eab308' },
-      { type: 'deadline', name: 'Deadline', tag: 'DEADLINE', width: 44, height: 24, color: '#ef4444' }
+      { type: 'retake', name: 'Retake', tag: 'RETAKE', width: 60, height: 32, color: '#eab308' },
+      { type: 'deadline', name: 'Deadline', tag: 'DEADLINE', width: 60, height: 32, color: '#ef4444' }
     ];
     choice = airTypes[Math.floor(Math.random() * airTypes.length)];
-    // Standing player head occupies y in [256, 282]. Ducking player is [286, 320].
-    // Airborne obstacle sits at y = 258..282, colliding with standing head, clear under duck!
-    yPos = gameState.groundY - 62;
+    yPos = gameState.groundY - 82; // 320 - 82 = 238
   } else {
-    // Ground obstacle: MUST JUMP [ A ] over it!
+    // Ground obstacle (56x56): MUST JUMP [ A ] over it!
     const groundTypes = [
-      { type: 'thesis', name: 'Thesis', tag: 'THESIS', width: 44, height: 44, color: '#3b82f6' },
-      { type: 'report', name: 'Report', tag: 'REPORT', width: 42, height: 44, color: '#a855f7' }
+      { type: 'thesis', name: 'Thesis', tag: 'THESIS', width: 56, height: 56, color: '#3b82f6' },
+      { type: 'report', name: 'Report', tag: 'REPORT', width: 56, height: 56, color: '#a855f7' }
     ];
     choice = groundTypes[Math.floor(Math.random() * groundTypes.length)];
-    yPos = gameState.groundY - choice.height;
+    yPos = gameState.groundY - choice.height; // 320 - 56 = 264
   }
 
   gameState.obstacles.push({
     ...choice,
-    x: 820,
+    x: 830,
     y: yPos,
     isAir
   });
 }
 
 function spawnItem() {
-  const needsHeart = gameState.hearts < 3 && Math.random() < 0.38;
+  const needsHeart = gameState.hearts < 3 && Math.random() < 0.40;
 
   let choice;
   if (needsHeart) {
-    choice = { type: 'heart', name: 'Heart', points: 50, width: 32, height: 32, color: '#ef4444' };
+    choice = { type: 'heart', name: 'Heart', points: 50, width: 44, height: 44, color: '#ef4444' };
   } else {
     const types = [
-      { type: 'grade_a', name: 'Grade A', points: 100, width: 32, height: 32, color: '#D4AF37' },
-      { type: 'diploma', name: 'Diploma', points: 150, width: 36, height: 34, color: '#fb923c' },
-      { type: 'coffee', name: 'Coffee', points: 50, width: 28, height: 32, color: '#d97706' },
-      { type: 'heart', name: 'Heart', points: 50, width: 32, height: 32, color: '#ef4444' }
+      { type: 'grade_a', name: 'Grade A', points: 100, width: 44, height: 44, color: '#D4AF37' },
+      { type: 'diploma', name: 'Diploma', points: 150, width: 46, height: 44, color: '#fb923c' },
+      { type: 'coffee', name: 'Coffee', points: 50, width: 40, height: 44, color: '#d97706' },
+      { type: 'heart', name: 'Heart', points: 50, width: 44, height: 44, color: '#ef4444' }
     ];
     choice = types[Math.floor(Math.random() * types.length)];
   }
 
   const heights = [
-    gameState.groundY - choice.height - 18,
-    gameState.groundY - choice.height - 75,
-    gameState.groundY - choice.height - 110
+    gameState.groundY - choice.height - 24,
+    gameState.groundY - choice.height - 84,
+    gameState.groundY - choice.height - 128
   ];
   const yPos = heights[Math.floor(Math.random() * heights.length)];
 
@@ -1283,84 +1285,92 @@ function drawPixelStudent(ctx, p) {
   const py = Math.floor(p.y);
 
   if (p.isDucking) {
-    // Sliding Robe low to the ground
+    // Sliding Robe low to the ground (width: 58, height: 44)
     ctx.fillStyle = '#0c1b3d';
-    ctx.fillRect(px + 4, py + 12, 44, 18);
+    ctx.fillRect(px + 4, py + 14, 50, 24);
 
     ctx.fillStyle = '#D4AF37';
-    ctx.fillRect(px + 10, py + 10, 32, 4);
+    ctx.fillRect(px + 10, py + 12, 38, 5);
 
     ctx.fillStyle = '#fcd34d';
-    ctx.fillRect(px + 34, py + 6, 12, 12);
+    ctx.fillRect(px + 36, py + 8, 16, 16);
     ctx.fillStyle = '#071126';
-    ctx.fillRect(px + 42, py + 9, 3, 3);
+    ctx.fillRect(px + 46, py + 12, 4, 4);
 
     drawMortarboard(ctx, px + 28, py - 4);
 
     ctx.fillStyle = '#050a17';
-    ctx.fillRect(px - 2, py + 22, 12, 6);
+    ctx.fillRect(px - 3, py + 26, 14, 8);
 
     if (Math.random() < 0.6) {
       spawnRunDust(px + 4, gameState.groundY);
     }
   } else {
+    // Standing Graduate (width: 58, height: 88)
+    // Dark Navy Robe Body
     ctx.fillStyle = '#0c1b3d';
-    ctx.fillRect(px + 8, py + 24, 28, 28);
+    ctx.fillRect(px + 10, py + 32, 38, 38);
     ctx.fillStyle = '#07122b';
-    ctx.fillRect(px + 10, py + 26, 6, 24);
+    ctx.fillRect(px + 12, py + 34, 8, 34);
 
+    // Golden Stole & Red Sash
     ctx.fillStyle = '#D4AF37';
-    ctx.fillRect(px + 18, py + 24, 8, 26);
+    ctx.fillRect(px + 23, py + 32, 12, 36);
     ctx.fillStyle = '#ef4444';
-    ctx.fillRect(px + 20, py + 24, 4, 24);
+    ctx.fillRect(px + 27, py + 32, 5, 34);
 
+    // Head / Face
     ctx.fillStyle = '#fcd34d';
-    ctx.fillRect(px + 14, py + 12, 16, 12);
+    ctx.fillRect(px + 18, py + 16, 22, 16);
     ctx.fillStyle = '#071126';
-    ctx.fillRect(px + 24, py + 15, 3, 3);
+    ctx.fillRect(px + 31, py + 20, 4, 4);
     ctx.fillStyle = '#e11d48';
-    ctx.fillRect(px + 23, py + 20, 3, 2);
+    ctx.fillRect(px + 30, py + 26, 4, 3);
 
+    // Hair
     ctx.fillStyle = '#3e2723';
-    ctx.fillRect(px + 12, py + 10, 18, 4);
-    ctx.fillRect(px + 12, py + 14, 3, 8);
+    ctx.fillRect(px + 15, py + 13, 25, 6);
+    ctx.fillRect(px + 15, py + 19, 4, 10);
 
+    // Mortarboard Cap
     if (!p.capToss) {
-      drawMortarboard(ctx, px + 8, py);
+      drawMortarboard(ctx, px + 10, py);
     } else {
       drawDetachedCap(ctx, p.capToss.x, p.capToss.y, p.capToss.rot);
     }
 
+    // Robe Arms / Sleeves
     ctx.fillStyle = '#0c1b3d';
     if (!p.isGrounded) {
-      ctx.fillRect(px + 2, py + 20, 8, 12);
-      ctx.fillRect(px + 34, py + 18, 8, 12);
+      ctx.fillRect(px + 2, py + 26, 10, 16);
+      ctx.fillRect(px + 46, py + 24, 10, 16);
     } else {
-      const armOffset = Math.sin(p.runFrame * Math.PI / 2) * 4;
-      ctx.fillRect(px + 4, py + 26 + armOffset, 8, 14);
+      const armOffset = Math.sin(p.runFrame * Math.PI / 2) * 5;
+      ctx.fillRect(px + 4, py + 34 + armOffset, 10, 18);
     }
 
+    // Trousers & Dress Shoes
     ctx.fillStyle = '#1e293b';
     if (!p.isGrounded) {
-      ctx.fillRect(px + 12, py + 50, 8, 8);
-      ctx.fillRect(px + 24, py + 48, 8, 6);
+      ctx.fillRect(px + 16, py + 70, 10, 12);
+      ctx.fillRect(px + 32, py + 68, 10, 10);
       ctx.fillStyle = '#050a17';
-      ctx.fillRect(px + 10, py + 58, 10, 4);
-      ctx.fillRect(px + 24, py + 54, 10, 4);
+      ctx.fillRect(px + 14, py + 82, 14, 6);
+      ctx.fillRect(px + 32, py + 78, 14, 6);
     } else {
       const step = p.runFrame;
-      let leg1Y = 52, leg2Y = 52, leg1X = 12, leg2X = 24;
-      if (step === 0) { leg1X = 8; leg2X = 28; }
-      else if (step === 1) { leg1X = 14; leg2X = 22; leg1Y = 50; }
-      else if (step === 2) { leg1X = 26; leg2X = 10; }
-      else if (step === 3) { leg1X = 20; leg2X = 14; leg2Y = 50; }
+      let leg1Y = 72, leg2Y = 72, leg1X = 16, leg2X = 32;
+      if (step === 0) { leg1X = 12; leg2X = 38; }
+      else if (step === 1) { leg1X = 20; leg2X = 30; leg1Y = 70; }
+      else if (step === 2) { leg1X = 36; leg2X = 14; }
+      else if (step === 3) { leg1X = 28; leg2X = 18; leg2Y = 70; }
 
-      ctx.fillRect(px + leg1X, py + 50, 6, leg1Y - 50 + 6);
-      ctx.fillRect(px + leg2X, py + 50, 6, leg2Y - 50 + 6);
+      ctx.fillRect(px + leg1X, py + 70, 8, leg1Y - 70 + 8);
+      ctx.fillRect(px + leg2X, py + 70, 8, leg2Y - 70 + 8);
 
       ctx.fillStyle = '#050a17';
-      ctx.fillRect(px + leg1X - 2, py + leg1Y + 6, 10, 4);
-      ctx.fillRect(px + leg2X - 2, py + leg2Y + 6, 10, 4);
+      ctx.fillRect(px + leg1X - 3, py + leg1Y + 8, 14, 6);
+      ctx.fillRect(px + leg2X - 3, py + leg2Y + 8, 14, 6);
     }
   }
 
@@ -1369,37 +1379,37 @@ function drawPixelStudent(ctx, p) {
 
 function drawMortarboard(ctx, x, y) {
   ctx.fillStyle = '#09152e';
-  ctx.fillRect(x + 6, y + 6, 16, 5);
+  ctx.fillRect(x + 8, y + 8, 22, 7);
 
   ctx.fillStyle = '#0f2044';
   ctx.beginPath();
-  ctx.moveTo(x + 14, y);
-  ctx.lineTo(x + 28, y + 4);
-  ctx.lineTo(x + 14, y + 8);
-  ctx.lineTo(x, y + 4);
+  ctx.moveTo(x + 19, y);
+  ctx.lineTo(x + 38, y + 5);
+  ctx.lineTo(x + 19, y + 10);
+  ctx.lineTo(x, y + 5);
   ctx.closePath();
   ctx.fill();
 
   ctx.fillStyle = '#FFE79A';
-  ctx.fillRect(x + 13, y + 3, 3, 3);
+  ctx.fillRect(x + 17, y + 4, 4, 4);
 
   ctx.strokeStyle = '#D4AF37';
-  ctx.lineWidth = 1.5;
+  ctx.lineWidth = 1.8;
   ctx.beginPath();
-  ctx.moveTo(x + 14, y + 4);
-  ctx.lineTo(x + 24, y + 6);
-  ctx.lineTo(x + 26, y + 14);
+  ctx.moveTo(x + 19, y + 5);
+  ctx.lineTo(x + 32, y + 8);
+  ctx.lineTo(x + 35, y + 18);
   ctx.stroke();
 
   ctx.fillStyle = '#FFE58F';
-  ctx.fillRect(x + 24, y + 14, 4, 4);
+  ctx.fillRect(x + 33, y + 18, 5, 5);
 }
 
 function drawDetachedCap(ctx, cx, cy, rot) {
   ctx.save();
   ctx.translate(cx, cy);
   ctx.rotate(rot);
-  drawMortarboard(ctx, -14, -6);
+  drawMortarboard(ctx, -19, -8);
   ctx.restore();
 }
 
@@ -1413,106 +1423,121 @@ function drawPixelObstacle(ctx, obs) {
     // Draw subtle ground shadow to show it is floating in the air
     ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
     ctx.beginPath();
-    ctx.ellipse(ox + obs.width / 2, gameState.groundY - 2, obs.width * 0.45, 3, 0, 0, Math.PI * 2);
+    ctx.ellipse(ox + obs.width / 2, gameState.groundY - 2, obs.width * 0.45, 4, 0, 0, Math.PI * 2);
     ctx.fill();
   }
 
   if (obs.type === 'deadline') {
-    // Airborne urgent deadline alarm clock
+    // Airborne urgent deadline alarm clock (scaled to 60x32)
+    const clockX = ox + 30;
+    const clockY = oy + 16;
+
     ctx.fillStyle = '#dc2626';
     ctx.beginPath();
-    ctx.arc(ox + 20, oy + 12, 11, 0, Math.PI * 2);
+    ctx.arc(clockX, clockY, 14, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = '#fee2e2';
     ctx.beginPath();
-    ctx.arc(ox + 20, oy + 12, 8, 0, Math.PI * 2);
+    ctx.arc(clockX, clockY, 10, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.strokeStyle = '#991b1b';
-    ctx.lineWidth = 1.8;
+    ctx.lineWidth = 2.2;
     ctx.beginPath();
-    ctx.moveTo(ox + 20, oy + 12);
-    ctx.lineTo(ox + 20, oy + 6);
-    ctx.moveTo(ox + 20, oy + 12);
-    ctx.lineTo(ox + 25, oy + 12);
+    ctx.moveTo(clockX, clockY);
+    ctx.lineTo(clockX, clockY - 7);
+    ctx.moveTo(clockX, clockY);
+    ctx.lineTo(clockX + 6, clockY);
     ctx.stroke();
 
     ctx.fillStyle = '#f59e0b';
-    ctx.fillRect(ox + 10, oy, 5, 4);
-    ctx.fillRect(ox + 25, oy, 5, 4);
+    ctx.fillRect(clockX - 13, oy + 2, 6, 5);
+    ctx.fillRect(clockX + 7, oy + 2, 6, 5);
 
     // Speed lines
-    ctx.strokeStyle = 'rgba(239, 68, 68, 0.6)';
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
+    ctx.lineWidth = 1.8;
     ctx.beginPath();
-    ctx.moveTo(ox + obs.width + 2, oy + 8);
-    ctx.lineTo(ox + obs.width + 10, oy + 8);
-    ctx.moveTo(ox + obs.width + 4, oy + 16);
-    ctx.lineTo(ox + obs.width + 12, oy + 16);
+    ctx.moveTo(ox + obs.width + 2, oy + 10);
+    ctx.lineTo(ox + obs.width + 12, oy + 10);
+    ctx.moveTo(ox + obs.width + 4, oy + 20);
+    ctx.lineTo(ox + obs.width + 14, oy + 20);
     ctx.stroke();
   } else if (obs.type === 'retake') {
-    // Airborne course retake exam paper with red 'F' grade
+    // Airborne course retake exam paper with red 'F' grade (scaled to 60x32)
     ctx.fillStyle = '#fef08a';
-    ctx.fillRect(ox + 4, oy + 2, 34, 20);
+    ctx.fillRect(ox + 8, oy + 2, 44, 28);
 
     ctx.fillStyle = '#ca8a04';
-    ctx.fillRect(ox + 8, oy + 6, 14, 2);
-    ctx.fillRect(ox + 8, oy + 10, 18, 2);
-    ctx.fillRect(ox + 8, oy + 14, 12, 2);
+    ctx.fillRect(ox + 13, oy + 7, 18, 2);
+    ctx.fillRect(ox + 13, oy + 12, 22, 2);
+    ctx.fillRect(ox + 13, oy + 17, 16, 2);
 
     ctx.fillStyle = '#dc2626';
-    ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
-    ctx.fillText("F", ox + 22, oy + 17);
+    ctx.font = "bold 19px 'Be Vietnam Pro', sans-serif";
+    ctx.fillText("F", ox + 30, oy + 22);
 
     // Floating flutter wings
-    ctx.fillStyle = 'rgba(254, 240, 138, 0.6)';
+    ctx.fillStyle = 'rgba(254, 240, 138, 0.75)';
     ctx.beginPath();
-    ctx.ellipse(ox + 2, oy + 10, 3, 6, -0.3, 0, Math.PI * 2);
-    ctx.ellipse(ox + 40, oy + 10, 3, 6, 0.3, 0, Math.PI * 2);
+    ctx.ellipse(ox + 5, oy + 14, 5, 8, -0.3, 0, Math.PI * 2);
+    ctx.ellipse(ox + 55, oy + 14, 5, 8, 0.3, 0, Math.PI * 2);
     ctx.fill();
   } else if (obs.type === 'thesis') {
-    // Ground thesis laptop
+    // Ground thesis laptop (scaled to 56x56)
     ctx.fillStyle = '#1e3a8a';
-    ctx.fillRect(ox + 4, oy + 6, 36, 26);
+    ctx.fillRect(ox + 6, oy + 6, 44, 34);
 
     ctx.fillStyle = '#0f172a';
-    ctx.fillRect(ox + 7, oy + 9, 30, 20);
+    ctx.fillRect(ox + 9, oy + 9, 38, 28);
 
     ctx.fillStyle = '#22c55e';
-    ctx.fillRect(ox + 10, oy + 13, 14, 2);
-    ctx.fillRect(ox + 10, oy + 17, 18, 2);
+    ctx.fillRect(ox + 13, oy + 14, 18, 3);
+    ctx.fillRect(ox + 13, oy + 19, 22, 3);
     ctx.fillStyle = '#ef4444';
-    ctx.fillRect(ox + 28, oy + 13, 6, 8);
+    ctx.fillRect(ox + 34, oy + 14, 8, 10);
 
     ctx.fillStyle = '#334155';
-    ctx.fillRect(ox + 16, oy + 32, 12, 4);
-    ctx.fillRect(ox + 8, oy + 36, 28, 4);
+    ctx.fillRect(ox + 20, oy + 40, 16, 4);
+    ctx.fillRect(ox + 8, oy + 44, 40, 6);
   } else if (obs.type === 'report') {
-    // Ground report binder stack
+    // Ground report binder stack (scaled to 56x56)
     ctx.fillStyle = '#7e22ce';
-    ctx.fillRect(ox + 4, oy + 24, 34, 18);
+    ctx.fillRect(ox + 4, oy + 34, 48, 18);
     ctx.fillStyle = '#9333ea';
-    ctx.fillRect(ox + 8, oy + 14, 30, 12);
+    ctx.fillRect(ox + 8, oy + 19, 42, 16);
     ctx.fillStyle = '#a855f7';
-    ctx.fillRect(ox + 6, oy + 4, 32, 12);
+    ctx.fillRect(ox + 6, oy + 5, 44, 15);
 
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(ox + 28, oy + 6, 6, 4);
-    ctx.fillRect(ox + 10, oy + 16, 6, 4);
+    ctx.fillRect(ox + 36, oy + 8, 8, 5);
+    ctx.fillRect(ox + 12, oy + 22, 8, 5);
+    ctx.fillRect(ox + 38, oy + 37, 8, 5);
   }
 
-  // Floating Tag Banner (Be Vietnam Pro)
-  ctx.fillStyle = 'rgba(7, 17, 38, 0.9)';
-  ctx.fillRect(ox - 8, oy - 18, obs.width + 16, 15);
+  // Floating Tag Banner (Be Vietnam Pro, High-Contrast Pill for Mobile)
+  const tagText = obs.isAir ? `⬇ DUCK: ${obs.tag}` : `⬆ JUMP: ${obs.tag}`;
+  ctx.font = "bold 12px 'Be Vietnam Pro', sans-serif";
+  const tagMetrics = ctx.measureText(tagText);
+  const pillW = tagMetrics.width + 16;
+  const pillH = 22;
+  const pillX = ox + (obs.width - pillW) / 2;
+  const pillY = oy - 27;
+
+  ctx.fillStyle = 'rgba(5, 12, 30, 0.95)';
+  ctx.beginPath();
+  ctx.roundRect(pillX, pillY, pillW, pillH, 6);
+  ctx.fill();
+
   ctx.strokeStyle = obs.color;
-  ctx.lineWidth = 1;
-  ctx.strokeRect(ox - 8, oy - 18, obs.width + 16, 15);
+  ctx.lineWidth = 1.6;
+  ctx.stroke();
 
   ctx.fillStyle = obs.color;
-  ctx.font = "bold 9px 'Be Vietnam Pro', sans-serif";
   ctx.textAlign = 'center';
-  ctx.fillText(obs.isAir ? `⬇ DUCK: ${obs.tag}` : `⬆ JUMP: ${obs.tag}`, ox + obs.width / 2, oy - 7);
+  ctx.textBaseline = 'middle';
+  ctx.fillText(tagText, pillX + pillW / 2, pillY + pillH / 2);
 
   ctx.restore();
 }
@@ -1521,65 +1546,67 @@ function drawPixelItem(ctx, item) {
   ctx.save();
   const ix = Math.floor(item.x);
   const iy = Math.floor(item.y + (item.floatY || 0));
+  const cx = ix + item.width / 2;
+  const cy = iy + item.height / 2;
 
-  ctx.fillStyle = item.type === 'heart' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(255, 223, 115, 0.25)';
+  ctx.fillStyle = item.type === 'heart' ? 'rgba(239, 68, 68, 0.35)' : 'rgba(255, 223, 115, 0.3)';
   ctx.beginPath();
-  ctx.arc(ix + item.width / 2, iy + item.height / 2, 20, 0, Math.PI * 2);
+  ctx.arc(cx, cy, 24, 0, Math.PI * 2);
   ctx.fill();
 
   if (item.type === 'heart') {
     ctx.fillStyle = '#ef4444';
-    ctx.shadowColor = 'rgba(239, 68, 68, 0.8)';
-    ctx.shadowBlur = 8;
+    ctx.shadowColor = 'rgba(239, 68, 68, 0.9)';
+    ctx.shadowBlur = 10;
     ctx.beginPath();
-    const cx = ix + 16, cy = iy + 16;
-    ctx.moveTo(cx, cy + 10);
-    ctx.bezierCurveTo(cx - 14, cy - 2, cx - 14, cy - 12, cx, cy - 6);
-    ctx.bezierCurveTo(cx + 14, cy - 12, cx + 14, cy - 2, cx, cy + 10);
+    ctx.moveTo(cx, cy + 14);
+    ctx.bezierCurveTo(cx - 18, cy - 2, cx - 18, cy - 16, cx, cy - 8);
+    ctx.bezierCurveTo(cx + 18, cy - 16, cx + 18, cy - 2, cx, cy + 14);
     ctx.fill();
 
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(cx - 6, cy - 6, 3, 3);
+    ctx.fillRect(cx - 7, cy - 8, 4, 4);
   } else if (item.type === 'grade_a') {
     ctx.fillStyle = '#f59e0b';
     ctx.beginPath();
-    ctx.arc(ix + 16, iy + 16, 14, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 18, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = '#FFE79A';
     ctx.beginPath();
-    ctx.arc(ix + 16, iy + 16, 11, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 14, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.fillStyle = '#b45309';
-    ctx.font = "bold 13px 'Be Vietnam Pro', sans-serif";
+    ctx.font = "bold 16px 'Be Vietnam Pro', sans-serif";
     ctx.textAlign = 'center';
-    ctx.fillText("A+", ix + 16, iy + 21);
+    ctx.textBaseline = 'middle';
+    ctx.fillText("A+", cx, cy);
   } else if (item.type === 'diploma') {
     ctx.fillStyle = '#fef3c7';
-    ctx.fillRect(ix + 4, iy + 8, 28, 16);
+    ctx.fillRect(ix + 5, iy + 10, 36, 22);
 
     ctx.fillStyle = '#ef4444';
-    ctx.fillRect(ix + 16, iy + 6, 6, 20);
+    ctx.fillRect(ix + 19, iy + 8, 8, 26);
     ctx.beginPath();
-    ctx.moveTo(ix + 16, iy + 26);
-    ctx.lineTo(ix + 14, iy + 32);
-    ctx.lineTo(ix + 24, iy + 26);
+    ctx.moveTo(ix + 19, iy + 34);
+    ctx.lineTo(ix + 16, iy + 42);
+    ctx.lineTo(ix + 27, iy + 34);
     ctx.fill();
   } else if (item.type === 'coffee') {
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(ix + 7, iy + 8, 16, 4);
+    ctx.fillRect(ix + 10, iy + 10, 20, 6);
 
     ctx.fillStyle = '#b45309';
-    ctx.fillRect(ix + 8, iy + 12, 14, 18);
+    ctx.fillRect(ix + 11, iy + 16, 18, 22);
 
     ctx.fillStyle = '#d97706';
-    ctx.fillRect(ix + 7, iy + 16, 16, 8);
+    ctx.fillRect(ix + 10, iy + 22, 20, 10);
 
     ctx.fillStyle = '#ffffff';
     ctx.globalAlpha = 0.7;
-    ctx.fillRect(ix + 11, iy + 2, 2, 4);
-    ctx.fillRect(ix + 16, iy + 0, 2, 5);
+    ctx.fillRect(ix + 15, iy + 4, 3, 5);
+    ctx.fillRect(ix + 22, iy + 2, 3, 6);
   }
 
   ctx.restore();
@@ -1825,11 +1852,11 @@ function renderInvitationCard() {
   ctx.fillText(guestName, W / 2, 325);
   ctx.restore();
 
-  // Highlighted Invitation Subtitle (Bigger font & prominent gold "Quốc Việt")
+  // Highlighted Invitation Subtitle (Streamlined & prominent gold "Quốc Việt")
   ctx.save();
   ctx.textBaseline = "middle";
 
-  const prefixText = "Đến tham dự và cùng chia sẻ khoảnh khắc tốt nghiệp ý nghĩa cùng ";
+  const prefixText = "Đến chung vui lễ tốt nghiệp cùng ";
   const highlightName = "Quốc Việt";
 
   ctx.font = "500 21px 'Be Vietnam Pro', sans-serif";
@@ -1871,72 +1898,64 @@ function renderInvitationCard() {
   // Divider
   drawCardDivider(ctx, W / 2, 425, 700);
 
-  // 6. Ceremony Title & Host Spotlight
+  // 6. Ceremony Title & Host Spotlight (Yêu cầu: chỉ ghi Quốc Việt)
   ctx.save();
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  ctx.font = "bold 32px 'Playfair Display', Georgia, serif";
+  ctx.font = "bold 30px 'Playfair Display', Georgia, serif";
   ctx.fillStyle = "#FFFFFF";
-  ctx.fillText("LỄ TỐT NGHIỆP ĐẠI HỌC", W / 2, 470);
+  ctx.fillText("LỄ TỐT NGHIỆP", W / 2, 470);
 
-  // Host Name: TRẦN QUỐC VIỆT
-  ctx.font = "bold 52px 'Playfair Display', Georgia, serif";
-  const hostGrad = createGoldGradient(ctx, W / 2 - 220, 540, W / 2 + 220, 540);
+  // Host Name: QUỐC VIỆT
+  ctx.font = "bold 58px 'Playfair Display', Georgia, serif";
+  const hostGrad = createGoldGradient(ctx, W / 2 - 180, 540, W / 2 + 180, 540);
   ctx.fillStyle = hostGrad;
   ctx.shadowColor = "rgba(212, 175, 55, 0.75)";
   ctx.shadowBlur = 20;
-  ctx.fillText((CARD_CONFIG.hostName || "TRẦN QUỐC VIỆT"), W / 2, 540);
+  ctx.fillText("QUỐC VIỆT", W / 2, 540);
 
   // Host Badge
   ctx.shadowColor = "transparent";
-  drawAffiliationPill(ctx, W / 2, 595, "KỸ THUẬT PHẦN MỀM • ĐẠI HỌC FPT CẦN THƠ");
+  drawAffiliationPill(ctx, W / 2, 595, "ĐẠI HỌC FPT CẦN THƠ");
   ctx.restore();
 
   // Divider
-  drawCardDivider(ctx, W / 2, 655, 700);
+  drawCardDivider(ctx, W / 2, 650, 700);
 
-  // 7. Event Information Showcase Glass Cards
-  // Box 1: Thời gian buổi lễ (Cập nhật 10:30)
-  drawEventInfoCard(ctx, 120, 695, 760, 190, {
+  // 7. Event Information Showcase Glass Cards (Rút gọn tinh gọn, không rườm rà)
+  // Box 1: Thời gian buổi lễ (10:30)
+  drawEventInfoCard(ctx, 120, 685, 760, 140, {
     icon: "calendar",
-    tag: "THỜI GIAN TỔ CHỨC",
-    mainText: "CHỦ NHẬT, NGÀY 25 THÁNG 10 NĂM 2026",
-    timeText: "10:30 — 12:00 TRƯA",
-    subNote: "Vui lòng có mặt đúng giờ để cùng chụp ảnh kỷ niệm"
+    tag: "THỜI GIAN DIỄN RA",
+    timeText: "10:30 — 12:00",
+    mainText: "Chủ Nhật, ngày 25 tháng 10 năm 2026"
   });
 
   // Box 2: Địa điểm tổ chức
-  drawEventInfoCard(ctx, 120, 930, 760, 205, {
+  drawEventInfoCard(ctx, 120, 845, 760, 140, {
     icon: "location",
     tag: "ĐỊA ĐIỂM TỔ CHỨC",
-    mainText: "SÂN VẬN ĐỘNG TRƯỜNG ĐẠI HỌC FPT CẦN THƠ",
-    addressLine1: "Số 600, Đường Nguyễn Văn Cừ nối dài, P. An Bình,",
-    addressLine2: "Quận Ninh Kiều, TP. Cần Thơ",
-    phoneText: "Hotline liên hệ: 0949 373 770"
+    mainText: "ĐẠI HỌC FPT CẦN THƠ",
+    addressText: "Số 600, đường Nguyễn Văn Cừ nối dài, P. An Bình, Q. Ninh Kiều, TP. Cần Thơ"
   });
 
   // Divider
-  drawCardDivider(ctx, W / 2, 1175, 700);
+  drawCardDivider(ctx, W / 2, 1015, 700);
 
-  // 8. Warm Signature Closing
+  // 8. Warm Signature Closing (Rút gọn súc tích, sang trọng)
   ctx.save();
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  ctx.font = "bold 32px 'Dancing Script', cursive";
+  ctx.font = "bold 36px 'Dancing Script', cursive";
   ctx.fillStyle = "#FFE58F";
-  ctx.shadowColor = "rgba(212, 175, 55, 0.5)";
-  ctx.shadowBlur = 10;
-  ctx.fillText("Sự hiện diện của bạn là niềm vinh hạnh lớn đối với Quốc Việt!", W / 2, 1240);
-
-  ctx.shadowColor = "transparent";
-  ctx.font = "500 18px 'Be Vietnam Pro', sans-serif";
-  ctx.fillStyle = "#94A3B8";
-  ctx.fillText("Rất mong được đón tiếp và chụp những bức hình kỷ niệm cùng bạn!", W / 2, 1285);
+  ctx.shadowColor = "rgba(212, 175, 55, 0.6)";
+  ctx.shadowBlur = 12;
+  ctx.fillText("Rất hân hạnh được đón tiếp bạn!", W / 2, 1070);
 
   // 9. Bottom Crest & Seal
-  drawBottomAcademicSeal(ctx, W / 2, 1370);
+  drawBottomAcademicSeal(ctx, W / 2, 1150);
 
   ctx.restore();
 
@@ -2179,48 +2198,37 @@ function drawEventInfoCard(ctx, x, y, w, h, data) {
 
   if (data.icon === "calendar") {
     // Header Tag
-    ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
+    ctx.font = "bold 14px 'Be Vietnam Pro', sans-serif";
     ctx.fillStyle = "#D4AF37";
-    ctx.fillText(`🗓️ ${data.tag}`, cx, y + 36);
+    ctx.fillText(`🗓️ ${data.tag}`, cx, y + 30);
 
-    // Main Date
-    ctx.font = "bold 24px 'Be Vietnam Pro', sans-serif";
-    ctx.fillStyle = "#FFE58F";
-    ctx.fillText(data.mainText, cx, y + 78);
-
-    // Time
-    ctx.font = "bold 32px 'Playfair Display', Georgia, serif";
+    // Time (big bold luxury display)
+    ctx.font = "bold 34px 'Playfair Display', Georgia, serif";
     ctx.fillStyle = "#FFFFFF";
-    ctx.shadowColor = "rgba(212, 175, 55, 0.5)";
-    ctx.shadowBlur = 10;
-    ctx.fillText(data.timeText, cx, y + 120);
+    ctx.shadowColor = "rgba(212, 175, 55, 0.6)";
+    ctx.shadowBlur = 12;
+    ctx.fillText(data.timeText, cx, y + 70);
 
-    // Note
+    // Date
     ctx.shadowColor = "transparent";
-    ctx.font = "500 15px 'Be Vietnam Pro', sans-serif";
-    ctx.fillStyle = "#94A3B8";
-    ctx.fillText(data.subNote, cx, y + 158);
+    ctx.font = "bold 20px 'Be Vietnam Pro', sans-serif";
+    ctx.fillStyle = "#FFE58F";
+    ctx.fillText(data.mainText, cx, y + 106);
   } else if (data.icon === "location") {
     // Header Tag
-    ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
+    ctx.font = "bold 14px 'Be Vietnam Pro', sans-serif";
     ctx.fillStyle = "#D4AF37";
-    ctx.fillText(`📍 ${data.tag}`, cx, y + 34);
+    ctx.fillText(`📍 ${data.tag}`, cx, y + 30);
 
     // Main Venue
-    ctx.font = "bold 23px 'Be Vietnam Pro', sans-serif";
+    ctx.font = "bold 25px 'Be Vietnam Pro', sans-serif";
     ctx.fillStyle = "#FFE58F";
-    ctx.fillText(data.mainText, cx, y + 72);
+    ctx.fillText(data.mainText, cx, y + 70);
 
-    // Address
-    ctx.font = "500 17px 'Be Vietnam Pro', sans-serif";
+    // Address Line
+    ctx.font = "500 16px 'Be Vietnam Pro', sans-serif";
     ctx.fillStyle = "#E2E8F0";
-    ctx.fillText(data.addressLine1, cx, y + 108);
-    ctx.fillText(data.addressLine2, cx, y + 134);
-
-    // Hotline
-    ctx.font = "bold 19px 'Be Vietnam Pro', sans-serif";
-    ctx.fillStyle = "#FFDF73";
-    ctx.fillText(data.phoneText, cx, y + 172);
+    ctx.fillText(data.addressText, cx, y + 106);
   }
 
   ctx.restore();
@@ -2236,7 +2244,7 @@ function drawBottomAcademicSeal(ctx, cx, cy) {
 
   ctx.font = "bold 15px 'Be Vietnam Pro', sans-serif";
   ctx.fillStyle = "#D4AF37";
-  ctx.fillText("★  FPT UNIVERSITY  •  GRADUATION CEREMONY 2026  ★", cx, cy);
+  ctx.fillText("★  ĐẠI HỌC FPT CẦN THƠ  •  NIÊN KHÓA 2022 — 2026  ★", cx, cy);
 
   ctx.restore();
 }
@@ -2264,7 +2272,7 @@ function downloadCanvasCard() {
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-zA-Z0-9]/g, "_");
 
-    const fileName = `Thiep_Moi_Tot_Nghiep_Tran_Quoc_Viet_${sanitized}.png`;
+    const fileName = `Thiep_Moi_Tot_Nghiep_Quoc_Viet_${sanitized}.png`;
     const imageURL = canvas.toDataURL("image/png", 1.0);
 
     const link = document.createElement('a');
@@ -2456,4 +2464,46 @@ function setupUIEventListeners() {
 
   const copyImageBtn = document.getElementById('copyImageBtn');
   if (copyImageBtn) copyImageBtn.addEventListener('click', copyCanvasCardToClipboard);
+
+  // Manual Name Entry (Song song với Google Sign-In)
+  const btnManualStart = document.getElementById('btnManualStart');
+  const manualNameInput = document.getElementById('manualNameInput');
+
+  function handleManualLogin() {
+    if (!manualNameInput) return;
+    const name = manualNameInput.value.trim();
+    if (!name) {
+      showToast("Vui lòng nhập tên của bạn để tiếp tục!");
+      manualNameInput.focus();
+      return;
+    }
+
+    const user = {
+      name: name,
+      email: "",
+      picture: "",
+      sub: "manual_" + Date.now()
+    };
+
+    try {
+      localStorage.setItem('user_session', JSON.stringify(user));
+    } catch (e) {
+      console.error("LocalStorage write error:", e);
+    }
+
+    setUserState(user, true);
+  }
+
+  if (btnManualStart) {
+    btnManualStart.addEventListener('click', handleManualLogin);
+  }
+
+  if (manualNameInput) {
+    manualNameInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleManualLogin();
+      }
+    });
+  }
 }

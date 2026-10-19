@@ -281,9 +281,90 @@ body {
 .auth-desc {
   color: var(--text-muted);
   max-width: 580px;
-  margin: 0 auto 28px;
+  margin: 0 auto 24px;
   font-size: 0.98rem;
   line-height: 1.65;
+}
+
+/* Method 1: Manual Name Input */
+.manual-name-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.input-field-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-prefix-icon {
+  position: absolute;
+  left: 16px;
+  color: var(--gold-light);
+  font-size: 1.15rem;
+  pointer-events: none;
+}
+
+.custom-name-input {
+  width: 100%;
+  padding: 13px 18px 13px 46px;
+  background: rgba(6, 16, 38, 0.88);
+  border: 1.5px solid var(--border-gold);
+  border-radius: var(--radius-full);
+  color: var(--text-white);
+  font-family: var(--font-body);
+  font-size: 0.98rem;
+  font-weight: 600;
+  outline: none;
+  transition: all 0.25s ease;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
+}
+
+.custom-name-input:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.45), inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.custom-name-input::placeholder {
+  color: #64748b;
+  font-weight: 400;
+}
+
+.btn-enter-game {
+  padding: 12px 24px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border-radius: var(--radius-full);
+}
+
+/* Auth Divider */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 380px;
+  margin: 20px auto 16px;
+}
+
+.auth-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.35), transparent);
+}
+
+.auth-divider-text {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--text-muted);
 }
 
 .google-btn-wrapper {
@@ -1371,26 +1452,34 @@ body {
    ======================================================== */
 @media (max-width: 768px) {
   .page-container {
-    padding: 16px 10px 36px;
+    padding: 8px 4px 32px;
   }
 
   .handheld-console {
-    padding: 14px 10px;
-    border-radius: 20px;
+    padding: 10px 6px 14px;
+    border-radius: 16px;
+    border-width: 2px;
+    width: 100%;
   }
 
   .console-screen-housing {
-    padding: 8px;
+    padding: 6px 4px;
+    border-radius: 10px;
+  }
+
+  .screen-canvas-wrapper {
+    aspect-ratio: 2 / 1;
+    border-radius: 6px;
   }
 
   .console-controls-deck {
-    padding: 16px 10px 6px;
+    padding: 14px 8px 4px;
   }
 
   .arcade-round-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 1.3rem;
+    width: 62px;
+    height: 62px;
+    font-size: 1.35rem;
   }
 
   .arcade-btn-name {

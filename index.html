@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Thiệp Mời Lễ Tốt Nghiệp - Trần Quốc Việt | FPT University</title>
-  <meta name="description" content="Trang tạo thiệp mời dự lễ tốt nghiệp cá nhân hóa & Game Pixel Runner của Trần Quốc Việt">
+  <title>Thiệp Mời Lễ Tốt Nghiệp - Quốc Việt | FPT University</title>
+  <meta name="description" content="Trang tạo thiệp mời dự lễ tốt nghiệp cá nhân hóa & Game Pixel Runner của Quốc Việt">
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
 
@@ -25,7 +25,7 @@
   <!-- Google Identity Services (GIS) Client -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <link rel="stylesheet" href="styles.css?v=20261022c">
+  <link rel="stylesheet" href="styles.css?v=20261023">
 </head>
 
 <body>
@@ -57,26 +57,43 @@
     <div class="generator-section">
 
       <!-- ======================================================== -->
-      <!-- STATE 1: GOOGLE AUTHENTICATION ONLY (KHÔNG NHẬP TAY) -->
+      <!-- STATE 1: NHẬP TÊN TRỰC TIẾP HOẶC ĐĂNG NHẬP GOOGLE -->
       <!-- ======================================================== -->
       <section id="authSection" class="glass-card auth-card">
         <div class="card-ornament top-ornament">
           <i class="fa-solid fa-graduation-cap"></i>
         </div>
 
-        <h2 class="auth-title">Đăng Nhập Bằng Google Để Vào Game</h2>
+        <h2 class="auth-title">Chào Mừng Bạn Đến Với Lễ Tốt Nghiệp</h2>
         <p class="auth-desc">
-          Vui lòng đăng nhập tài khoản Google để hệ thống trích xuất tên chính thức của bạn lên nhân vật
-          và cá nhân hóa trên tấm thiệp mời tốt nghiệp.
+          Nhập tên của bạn hoặc đăng nhập bằng Google để nhân vật cử nhân mang tên bạn và mở khóa thiệp mời tốt nghiệp độc quyền!
         </p>
 
-        <!-- Official Google Sign-In Button Container -->
+        <!-- Method 1: Nhập Tên Trực Tiếp -->
+        <div class="manual-name-box">
+          <div class="input-field-group">
+            <i class="fa-solid fa-user-graduate input-prefix-icon"></i>
+            <input type="text" id="manualNameInput" class="custom-name-input" placeholder="Nhập tên của bạn (VD: Quốc Việt, Minh Thư...)" maxlength="35" autocomplete="name">
+          </div>
+          <button id="btnManualStart" class="btn btn-gold btn-block btn-enter-game">
+            <i class="fa-solid fa-gamepad"></i> VÀO GAME & MỞ KHÓA THIỆP
+          </button>
+        </div>
+
+        <!-- Divider -->
+        <div class="auth-divider">
+          <span class="auth-divider-line"></span>
+          <span class="auth-divider-text">HOẶC TIẾP TỤC VỚI GOOGLE</span>
+          <span class="auth-divider-line"></span>
+        </div>
+
+        <!-- Method 2: Official Google Sign-In Button Container -->
         <div class="google-btn-wrapper">
           <div id="googleSignInBtn" class="g-signin-placeholder">
             <!-- Rendered dynamically by Google Identity Services -->
           </div>
           <p class="auth-hint">
-            <i class="fa-solid fa-shield-halved"></i> Đăng nhập bảo mật qua Google Identity Services
+            <i class="fa-solid fa-shield-halved"></i> Tự động đồng bộ họ tên & ảnh đại diện từ Google
           </p>
         </div>
       </section>
@@ -399,7 +416,7 @@
         <span class="crest-line"></span>
       </div>
       <p class="footer-copy">
-        © 2026 Trần Quốc Việt • Đại học FPT Cần Thơ • Kỹ Thuật Phần Mềm • Graduation Invitation & Handheld Console Simulator
+        © 2026 Quốc Việt • Đại học FPT Cần Thơ • Kỹ Thuật Phần Mềm • Graduation Invitation & Handheld Console Simulator
       </p>
     </footer>
   </main>
@@ -407,7 +424,7 @@
   <!-- Notification Toast -->
   <div id="toast" class="toast-notification"></div>
 
-  <script src="app.js?v=20261022c"></script>
+  <script src="app.js?v=20261023"></script>
 </body>
 
 </html>
